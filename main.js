@@ -705,20 +705,58 @@ function setupAddTorrentDialog() {
 
     // -- OK Button (File)
 
-    $("ADD_FILE_OK").addEvent("click", function() {
+    $("ADD_FILE_OK").addEvent("click", function(ev) {
+        var files = $("dlgAdd-file").files;
+
+        if(!files.length) {
+            DialogManager.hide("Add");
+            return;
+        }
+
+        // Disable button before we send stuff.
+        var that = this;
         this.disabled = true;
 
         var dir = $("dlgAdd-basePath").value || 0;
         var sub = encodeURIComponent($("dlgAdd-subPath").get("value")); // TODO: Sanitize!
 
-        $("dlgAdd-form").set("action", guiBase
-            + "?token=" + utWebUI.TOKEN
-            + "&action=add-file"
-            + "&download_dir=" + dir
-            + "&path=" + sub
-        ).submit();
-        // should it hide the dialog now? YES
-        DialogManager.hide("Add");
+        var params = {};
+        var requests = [];
+
+        function makeRequest(reqIndex) {
+            reqIndex = reqIndex || 0;
+
+            if(reqIndex >= requests.length) {
+                that.disabled = false;
+                DialogManager.hide("Add");
+                return;
+            }
+
+            utWebUI.request2("webui.addTorrent", requests[reqIndex],
+                function(result) {
+                    makeRequest(reqIndex + 1);
+                });
+        }
+
+        function readCallback(data) {
+            requests.push([ "file", data, params ]);
+
+            if(requests.length < files.length) {
+                return;
+            }
+
+            makeRequest();
+        }
+
+        for(var i = 0; i < files.length; i++) {
+            (function(file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    readCallback(e.target.result.split(",")[1]);
+                };
+                reader.readAsDataURL(file);
+            })(files[i]);
+        }
     });
 
     // -- Cancel Button (File)
@@ -726,36 +764,6 @@ function setupAddTorrentDialog() {
     $("ADD_FILE_CANCEL").addEvent("click", function(ev) {
         DialogManager.hide("Add");
     });
-
-    // -- Upload Frame
-
-    var uploadfrm = new IFrame({
-        "id": "uploadfrm",
-        "src": "about:blank",
-        "styles": {
-              display: "none"
-            , height: 0
-            , width: 0
-        },
-        "onload": function(doc) {
-            $("dlgAdd-file").set("value", "");
-            $("ADD_FILE_OK").disabled = false;
-
-            if (!doc) return;
-
-            var str = $(doc.body).get("text");
-            if (str) {
-                var data = JSON.decode(str);
-                if (has(data, "error")) {
-                    alert(data.error);
-                    log("[Add Torrent File Error] " + data.error);
-                }
-            }
-        }
-    }).inject(document.body);
-
-    $("dlgAdd-form").set("target", uploadfrm.get("id"));
-
 }
 
 function setupRSSDialogs() {

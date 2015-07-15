@@ -2177,13 +2177,8 @@ var utWebUI = {
     },
 
     "getDirectoryList": function(forceload, callback) {
-
-{ // TODO: Remove this once backend support is stable (requires 3.0+)
-    // better to base this off the "build" parameter that comes back with every action request?
-    // if (undefined === this.settings["webui.uconnect_enable"]) return;
-}
-
         var now = Date.now();
+
         if (forceload || !this.dirlist._TIME_ || (now - this.dirlist._TIME_) > (this.limits.minDirListCache * 1000)) {
             this.request("action=list-dirs", (function(json) {
                 this.dirlist.empty();
