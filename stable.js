@@ -44,7 +44,7 @@ var SPAN = new Element("span");
 function simpleClone(element, content) {
     element = $(element.cloneNode(!!content));
     element.uid = null;
-    $uid(element);
+    Slick.uidOf(element);
     return element;
 }
 
@@ -142,7 +142,7 @@ var STable = new Class({
 
         this.dHead.addEvents({
             "mousedown": function(ev) {
-                if (ev.isRightClick())
+                if (ev.rightClick)
                     $me.colMenu.delay(0, $me, ev.page);
             }
         });
@@ -164,7 +164,7 @@ var STable = new Class({
             "onCancel" : function(_, ev) {
                 this.detach();
                 $me.cancelSort = false;
-                if (!ev.isRightClick()) {
+                if (!ev.rightClick) {
                     if (this.element.tagName !== "TD")
                         this.element = this.element.getParent("td");
 
@@ -363,7 +363,7 @@ var STable = new Class({
         if (!this.options.rowsSelectable) return;
 
         this.dCont.addEvent("keydown", (function(ev) {
-            var ctrl = ((Browser.Platform.mac && ev.meta) || (!Browser.Platform.mac && ev.control));
+            var ctrl = ((Browser.platform.mac && ev.meta) || (!Browser.platform.mac && ev.control));
 
             if (ctrl && (ev.key == "a")) { // Ctrl + A
                 this.fillSelection();
@@ -960,9 +960,9 @@ var STable = new Class({
 
     "selectRow": function(ev, row) {
         var id = row.id.replace(new RegExp("^" + this.id + "-row-", ""), "");
-        if (!(ev.isRightClick() && has(this.rowSel, id))) {
+        if (!(ev.rightClick && has(this.rowSel, id))) {
             var multi = !!this.options.rowMultiSelect;
-            var ctrl = ((Browser.Platform.mac && ev.meta) || (!Browser.Platform.mac && ev.control));
+            var ctrl = ((Browser.platform.mac && ev.meta) || (!Browser.platform.mac && ev.control));
 
             if (multi && ev.shift) {
                 if (this.stSel === null) {

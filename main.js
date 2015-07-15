@@ -108,11 +108,11 @@ function setupMouseEvents() {
             targ.retrieve("mousewhitelist") ||
             ("textarea" === tag) ||
             (("input" === tag) && !targ.disabled && ["text", "file", "password"].contains(targ.type.toLowerCase())) ||
-            (("select" === tag) && !ev.isRightClick())
+            (("select" === tag) && !ev.rightClick)
         );
     };
     var mouseWhitelistWrap = function(ev) {
-        return !ev.isRightClick() || mouseWhitelist(ev);
+        return !ev.rightClick || mouseWhitelist(ev);
     };
 
     // -- Select
@@ -140,7 +140,7 @@ function setupMouseEvents() {
         var overrideButton;
         document.addEvents({
             "mousedown": function(ev) {
-                if (!overrideButton && ev.isRightClick()) {
+                if (!overrideButton && ev.rightClick) {
                     var doc = ev.target.ownerDocument;
                     overrideButton = doc.createElement("input");
                     overrideButton.type = "button";
@@ -192,7 +192,7 @@ function setupKeyboardEvents() {
         "esc": 1
     };
 
-    if (Browser.Platform.mac) {
+    if (Browser.platform.mac) {
         keyBindings["meta a"] = keyBindings["ctrl a"];
         keyBindings["meta e"] = keyBindings["ctrl e"];
         keyBindings["meta o"] = keyBindings["ctrl o"];
@@ -515,7 +515,7 @@ function setupDetailInfoPaneUI() {
     // -- General Tab
 
     $$("#mainInfoPane-generalTab td").addEvent("mousedown", function(ev) {
-        if (!ev.isRightClick()) return;
+        if (!ev.rightClick) return;
 
         var targ = ev.target;
         if (targ.tagName.toLowerCase() !== "td")
@@ -543,7 +543,7 @@ function setupDetailInfoPaneUI() {
     }, utWebUI.defConfig.peerTable));
 
     $("mainInfoPane-peersTab").addEvent("mousedown", function(ev) {
-        if (ev.isRightClick() && ev.target.hasClass("stable-body")) {
+        if (ev.rightClick && ev.target.hasClass("stable-body")) {
             utWebUI.showPeerMenu(ev);
         }
     });
@@ -663,7 +663,7 @@ function setupToolbar() {
 
     $("search").addStopEvents({
         "mousedown": function(ev) {
-            if (ev.isRightClick()) {
+            if (ev.rightClick) {
                 utWebUI.searchMenuShow(this);
             }
         },

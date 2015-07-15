@@ -1485,12 +1485,12 @@ var utWebUI = {
         });
 
         if ((Browser.Platform.mac && ev.meta) || (!Browser.Platform.mac && ev.control)) {
-            if (ev.isRightClick()) {
+            if (ev.rightClick) {
                 prevSelected = false;
             }
         }
         else {
-            if (!(ev.isRightClick() && prevSelected)) {
+            if (!(ev.rightClick && prevSelected)) {
                 this.config.activeTorGroups = {};
                 Object.each(this.defConfig.activeTorGroups, function(_, type) {
                     this.config.activeTorGroups[type] = {};
@@ -1504,7 +1504,7 @@ var utWebUI = {
         var trtTableUpdate = (function() {
             this.refreshSelectedTorGroups();
 
-            if (ev.isRightClick()) {
+            if (ev.rightClick) {
                 this.trtTable.fillSelection();
                 this.trtTable.fireEvent("onSelect", ev);
             }
@@ -1680,12 +1680,12 @@ var utWebUI = {
             var prevSelected = activeFeedCount > 1 && element.id in this.config.activeRssFeeds;
 
             if ((Browser.Platform.mac && ev.meta) || (!Browser.Platform.mac && ev.control)) {
-                if (ev.isRightClick()) {
+                if (ev.rightClick) {
                     prevSelected = false;
                 }
             }
             else {
-                if (!(ev.isRightClick() && prevSelected)) {
+                if (!(ev.rightClick && prevSelected)) {
                     this.config.activeRssFeeds = {};
                 }
 
@@ -1705,7 +1705,7 @@ var utWebUI = {
 
         this.refreshSelectedRSSFeeds();
 
-        if (ev.isRightClick()) {
+        if (ev.rightClick) {
             // Generate menu items
             var menuItems = [[L_("DLG_RSSDOWNLOADER_18"), this.showAddEditRSSFeed.bind(this, -1)]];
 
@@ -1910,7 +1910,7 @@ var utWebUI = {
             this.switchRSSFilter(element);
         }
 
-        if (ev.isRightClick()) {
+        if (ev.rightClick) {
             // Generate menu items
             var menuItems = [
                 [L_("DLG_RSSDOWNLOADER_27"),
@@ -2963,7 +2963,7 @@ var utWebUI = {
     },
 
     "statusSpeedMenuShow": function(speed, ev) {
-        if (!ev.isRightClick()) return true;
+        if (!ev.rightClick) return true;
 
         speed.set = speed.set || Function.from();
         speed.cur = parseInt(speed.cur, 10) || 0;
@@ -3284,7 +3284,8 @@ var utWebUI = {
         if (this.config.showDetails) {
             this.showDetails(id);
         }
-        if (ev.isRightClick()) {
+
+        if (ev.rightClick) {
             this.showTrtMenu.delay(0, this, [ev, id]);
         }
     },
@@ -3310,7 +3311,7 @@ var utWebUI = {
     },
 
     "showTrtMenu": function(ev, id) {
-        if (!ev.isRightClick()) return;
+        if (!ev.rightClick) return;
 
         var menuItems = []
 
@@ -3890,7 +3891,7 @@ var utWebUI = {
     },
 
     "flsSelect": function(ev, id) {
-        if (ev.isRightClick() && this.flsTable.selectedRows.length > 0)
+        if (ev.rightClick && this.flsTable.selectedRows.length > 0)
             this.showFileMenu.delay(0, this, ev);
     },
 
@@ -4071,7 +4072,7 @@ var utWebUI = {
     },
 
     "showGeneralMenu": function(ev) {
-        if (!ev.isRightClick()) return;
+        if (!ev.rightClick) return;
 
         var menuItems = [
             [L_("MENU_COPY"), this.showCopy.bind(this, L_("MENU_COPY"), ev.target.get("text"))]
@@ -4249,12 +4250,12 @@ var utWebUI = {
     },
 
     "prsSelect": function(ev, id) {
-        if (ev.isRightClick())
+        if (ev.rightClick)
             this.showPeerMenu.delay(0, this, ev);
     },
 
     "showPeerMenu": function(ev) {
-        if (!ev.isRightClick()) return;
+        if (!ev.rightClick) return;
 
         var menuItems = [
               [L_("MP_RESOLVE_IPS"), this.toggleResolveIP.bind(this)]
@@ -4929,12 +4930,12 @@ var utWebUI = {
     },
 
     "fdSelect": function(ev, id) {
-        if (ev.isRightClick() && this.rssfdTable.selectedRows.length > 0)
+        if (ev.rightClick && this.rssfdTable.selectedRows.length > 0)
             this.showFeedMenu.delay(0, this, ev);
     },
 
     "showFeedMenu": function(ev) {
-        if (!ev.isRightClick()) return;
+        if (!ev.rightClick) return;
 
         var feedItemIds = this.getSelFeedItemIds();
         if (feedItemIds.length <= 0) return;
