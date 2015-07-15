@@ -498,10 +498,8 @@ var STable = new Class({
         this.tBodyCols[iCol].setStyle("width", iWidth - (badIE ? 10 : 0));
 
         // Set column header row width
-        if (Browser.chrome || Browser.safari)
-            this.tBody.setStyle("width", this.tHead.getWidth());
-        else
-            this.tb.body.setStyle("width", this.tHead.getWidth());
+        this.tBody.setStyle("width", this.tHead.getWidth());
+        this.tb.body.setStyle("width", this.tHead.getWidth());
 
         // Store width
         this.colData[iCol].width = iWidth;
@@ -532,9 +530,9 @@ var STable = new Class({
                 for (var i = 0, bit = 1, len = this.cols; i < len; ++i, bit <<= 1) {
                     this.setColumnDisabled(this.colOrder[i], !!(val & bit));
                 }
-                this.calcSize();
             }).bind(this));
 
+            this.calcSize();
             refresh = true;
         }
 
@@ -1266,7 +1264,9 @@ var STable = new Class({
         dummy.children[0].set("html", "&nbsp;");
         this.tb.body.appendChild(dummy);
 
-        this.tb.rowheight = dummy.getDimensions({computeSize: true}).totalHeight;
+        this.tb.rowheight = (
+            dummy.getDimensions({computeSize: true}).totalHeight || dummy.getDimensions().height
+        );
 
         dummy.destroy();
 
@@ -1296,14 +1296,11 @@ var STable = new Class({
                 if (this.colData[i].disabled) continue;
 
                 var offset = (this.tHeadCols[i].offsetWidth - parseInt(this.tHeadCols[i].style.width, 10)).max(0);
-                this.tHeadCols[i].setStyle("width", (
-                    this.colData[i].width - ((Browser.chrome || Browser.safari) ? 0 : offset)
-                ).max(offset))
+                this.tHeadCols[i].setStyle("width", (this.colData[i].width - offset).max(offset));
             }
         }
 
-        if (Browser.chrome || Browser.safari)
-            this.tBody.setStyle("width", this.tHead.getWidth());
+        this.tBody.setStyle("width", this.tHead.getWidth());
     },
 
     "hideRow": function(id) {
@@ -1714,7 +1711,7 @@ var ColumnHandler = {
             st.colDragObj.set("html", drag.element.get("text")).setStyles({
                   "visibility": "visible"
                 , "left": left
-                , "width": drag.element.getStyle("width").toInt() - ((Browser.firefox || Browser.ie) ? 0 : 18) // TODO: Fix up hardcoding!
+                , "width": drag.element.getStyle("width").toInt()
                 , "textAlign": drag.element.getStyle("textAlign")
             });
 
@@ -1729,7 +1726,7 @@ var ColumnHandler = {
     "drag": function(st, drag) {
         if (st.cancelMove) { // resizing
             var colHead = st.tHeadCols[st.hotCell];
-            var w = drag.value.now.x - st.resizeCol.left + st.resizeCol.width + ((Browser.ie || Browser.firefox) ? colHead.offsetWidth - parseInt(colHead.style.width, 10) : 0);
+            var w = drag.value.now.x - st.resizeCol.left + st.resizeCol.width + (colHead.offsetWidth - parseInt(colHead.style.width, 10));
             drag.limit.x[0] = colHead.getPosition(st.dCont).x + st.dBody.getScrollLeft();
 //          colHead.setStyle("width", w.max(14));
 //          st.setColumnWidth(st.hotCell, colHead.getWidth());

@@ -517,15 +517,15 @@ ul.folder-tabs.icon li a > span > span {
     position: absolute; /* NOTE: This fixes tab wrapping on Opera caused by FF/IE reflow fix */
 }
 
-#mainInfoPane-tabs.icon li span span {
-    background: transparent url(./images/tabs.png) no-repeat;
+#mainInfoPane-tabs.icon li .tabIcon {
+    background: transparent url(./images/tabs.png) no-repeat 0 0px;
 }
 
-    .icon li#tab_mainInfoPane-generalTab span span { background-position: 0 0px; }
-    .icon li#tab_mainInfoPane-peersTab span span { background-position: 0 -32px; }
-    .icon li#tab_mainInfoPane-filesTab span span { background-position: 0 -64px; }
-    .icon li#tab_mainInfoPane-speedTab span span { background-position: 0 -80px; }
-    .icon li#tab_mainInfoPane-loggerTab span span { background-position: 0 -96px; }
+.icon li#tab_mainInfoPane-generalTab .tabIcon { background-position: 0 0px; }
+.icon li#tab_mainInfoPane-peersTab .tabIcon { background-position: 0 -32px; }
+.icon li#tab_mainInfoPane-filesTab .tabIcon { background-position: 0 -64px; }
+.icon li#tab_mainInfoPane-speedTab .tabIcon { background-position: 0 -80px; }
+.icon li#tab_mainInfoPane-loggerTab .tabIcon { background-position: 0 -96px; }
 
 #mainInfoPane-content {
     background: #FFFFFF;
