@@ -1,4 +1,4 @@
-var g_winTitle = "\u00B5Torrent WebUI v" + CONST.VERSION;
+var g_winTitle = "Hadouken v" + CONST.VERSION;
 var g_perSec;
 var g_dayCodes;
 var g_dayNames;

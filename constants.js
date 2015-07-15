@@ -1,5 +1,5 @@
 var CONST = {
-    VERSION: "0.388",
+    VERSION: "5.1",
     BUILD: "2013-05-28",
     TORRENT_HASH: 0,
     TORRENT_STATUS: 1,
