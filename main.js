@@ -566,40 +566,65 @@ function setupUserInterface() {
     $("aerssfd-subscribe_1").addEvent("click", function() {
         _link(this, 0, ["aerssfd-smart_ep"])
     });
+
     $("ADD_FILE_OK").addEvent("click", function() {
+        var files = $("dlgAdd-file").files;
+
+        if(!files.length) {
+            DialogManager.hide("Add");
+            return;
+        }
+
+        // Disable button before we send stuff.
+        var that = this;
         this.disabled = true;
-        var h = $("dlgAdd-basePath").value || 0;
-        var i = encodeURIComponent($("dlgAdd-subPath").get("value"));
-        $("dlgAdd-form").set("action", guiBase + "?token=" + utWebUI.TOKEN + "&action=add-file&download_dir=" + h + "&path=" + i).submit()
+
+        var dir = $("dlgAdd-basePath").value || 0;
+        var sub = encodeURIComponent($("dlgAdd-subPath").get("value")); // TODO: Sanitize!
+
+        var params = {};
+        var requests = [];
+
+        function makeRequest(reqIndex) {
+            reqIndex = reqIndex || 0;
+
+            if(reqIndex >= requests.length) {
+                that.disabled = false;
+                DialogManager.hide("Add");
+                return;
+            }
+
+            utWebUI.request2("webui.addTorrent", requests[reqIndex],
+                function(result) {
+                    makeRequest(reqIndex + 1);
+                });
+        }
+
+        function readCallback(data) {
+            requests.push([ "file", data, params ]);
+
+            if(requests.length < files.length) {
+                return;
+            }
+
+            makeRequest();
+        }
+
+        for(var i = 0; i < files.length; i++) {
+            (function(file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    readCallback(e.target.result.split(",")[1]);
+                };
+                reader.readAsDataURL(file);
+            })(files[i]);
+        }
     });
+    
     $("ADD_FILE_CANCEL").addEvent("click", function(h) {
         DialogManager.hide("Add")
     });
-    var b = new IFrame({
-        id: "uploadfrm",
-        src: "about:blank",
-        styles: {
-            display: "none",
-            height: 0,
-            width: 0
-        },
-        onload: function(i) {
-            $("dlgAdd-file").set("value", "");
-            $("ADD_FILE_OK").disabled = false;
-            if (!i) {
-                return
-            }
-            var j = $(i.body).get("text");
-            if (j) {
-                var h = JSON.decode(j);
-                if (has(h, "error")) {
-                    alert(h.error);
-                    log("[Add Torrent File Error] " + h.error)
-                }
-            }
-        }
-    }).inject(document.body);
-    $("dlgAdd-form").set("target", b.get("id"));
+    
     $("ADD_URL_OK").addEvent("click", function() {
         if ($("dlgAddURL-url").get("value").trim().length > 0) {
             DialogManager.hide("AddURL");
