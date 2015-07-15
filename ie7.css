@@ -6,18 +6,18 @@ found in the LICENSE file.
 */
 
 input, select {
-	font: small-caption;
+    font: small-caption;
 }
 
 #msgout {
-	position: relative;
-	width: 100%;
+    position: relative;
+    width: 100%;
 }
 
 #msgmid {
-	position: absolute;
-	top: 50%;
-	width: 100%;
+    position: absolute;
+    top: 50%;
+    width: 100%;
 }
 
 /**************************************************
@@ -26,17 +26,17 @@ input, select {
 
 ul.folder-tabs li,
 ul.folder-tabs li a span {
-	zoom: 1;
+    zoom: 1;
 }
 
 ul.folder-tabs li.selected a,
 ul.folder-tabs li a:hover {
-	border-top-width: 1px;
+    border-top-width: 1px;
 }
 
 ul.folder-tabs li a {
-	padding-bottom: 2px;
-	vertical-align: top;
+    padding-bottom: 2px;
+    vertical-align: top;
 }
 
 /**************************************************
@@ -44,7 +44,7 @@ ul.folder-tabs li a {
  **************************************************/
 
 #mainInfoPane-generalTab table {
-	font-size: 1em;
+    font-size: 1em;
 }
 
 /**************************************************
@@ -52,8 +52,8 @@ ul.folder-tabs li a {
  **************************************************/
 
 input[type="checkbox"] {
-	height: 13px;
-	width: 13px;
+    height: 13px;
+    width: 13px;
 }
 
 /**************************************************
@@ -61,7 +61,7 @@ input[type="checkbox"] {
  **************************************************/
 
 #dlgSettings-advText-wrap {
-	margin-right: 15px !important;
+    margin-right: 15px !important;
 }
 
 /**************************************************
@@ -71,5 +71,5 @@ input[type="checkbox"] {
 .stable-infobar .refreshBtn span,
 .stable-infobar .pageChanger .prevlink,
 .stable-infobar .pageChanger .nextlink {
-	zoom: 1;
+    zoom: 1;
 }
