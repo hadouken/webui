@@ -1069,7 +1069,6 @@ function setupSettings() {
             , "dlgSettings-Queueing"    : ""
             , "dlgSettings-Scheduler"   : ""
             , "dlgSettings-WebUI"       : ""
-            , "dlgSettings-Remote"      : ""
             , "dlgSettings-Advanced"    : ""
             , "dlgSettings-UIExtras"    : ""
             , "dlgSettings-DiskCache"   : ""
@@ -1206,18 +1205,6 @@ function setupSettings() {
             $("sched_table_info").getChildren().destroy();
         }
     });
-
-    // -- Remote Access
-
-    // Learn more button
-    $("DLG_SETTINGS_D_REMOTE_04").addEvent("click", function() {
-        openURL("https://remote.bittorrent.com/");
-    });
-    
-    // Sign in Button
-    $("DLG_SETTINGS_D_REMOTE_09").addEvent("click", function() {
-        utWebUI.registerRemote();
-    });
     
     // -- Advanced Options
 
@@ -1276,10 +1263,6 @@ function setupSettings() {
 
     $("webui.enable_listen").addEvent(linkedEvent, function() {
         _link(this, 0, ["webui.port"]);
-    });
-
-    $("webui.uconnect_enable").addEvent(linkedEvent, function() {
-        _link(this, 0, ["webui.uconnect_username", "proposed_uconnect_password", "DLG_SETTINGS_D_REMOTE_09", "webui.uconnect_cred_status", "DLG_SETTINGS_D_REMOTE_06", "STATUS_REMOTE_10"]);
     });
 
     $("multi_day_transfer_limit_en").addEvent(linkedEvent, function() {
@@ -1398,7 +1381,7 @@ function setupUserInterface() {
     setupPropertiesDialog();
     setupDeleteTorrentDialog();
     setupAddURLDialog();
-    setupAddLabelDialog();
+    //setupAddLabelDialog(); TODO
     setupSettings();
     setupStatusBar();
 
@@ -1653,7 +1636,6 @@ function loadDialogStrings() {
     _loadStrings("text", {
           "dlgAdd-head"           : "OV_TB_ADDTORR"
         , "dlgAddURL-head"        : "OV_TB_ADDURL"
-        , "dlgAddLabel-head"      : "OV_NEWLABEL_CAPTION"
         , "dlgProps-head"         : "DLG_TORRENTPROP_00"
         , "dlgRSSDownloader-head" : "OV_TB_RSSDOWNLDR"
         , "dlgSettings-head"      : "OV_TB_PREF"
@@ -1804,7 +1786,6 @@ function loadSettingStrings() {
         , "dlgSettings-TransferCap" : L_("ST_CAPT_TRANSFER_CAP")
         , "dlgSettings-Queueing"    : L_("ST_CAPT_QUEUEING")
         , "dlgSettings-WebUI"       : L_("ST_CAPT_WEBUI")
-        , "dlgSettings-Remote"      : L_("ST_CAPT_REMOTE")
         , "dlgSettings-Scheduler"   : L_("ST_CAPT_SCHEDULER")
         , "dlgSettings-Advanced"    : L_("ST_CAPT_ADVANCED")
         , "dlgSettings-UIExtras"    : L_("ST_CAPT_UI_EXTRAS") 
@@ -1956,17 +1937,6 @@ function loadSettingStrings() {
         , "MM_OPTIONS_SHOW_STATUS"
         , "MM_OPTIONS_SHOW_TOOLBAR"
 
-        // Remote
-        , "DLG_SETTINGS_D_REMOTE_01"
-        , "DLG_SETTINGS_D_REMOTE_02"
-        , "DLG_SETTINGS_D_REMOTE_03"
-        , "DLG_SETTINGS_D_REMOTE_04"
-        , "DLG_SETTINGS_D_REMOTE_05"
-        , "DLG_SETTINGS_D_REMOTE_06"
-        , "DLG_SETTINGS_D_REMOTE_07"
-        , "DLG_SETTINGS_D_REMOTE_08"
-        , "DLG_SETTINGS_D_REMOTE_09"
-
         // Advanced
         , "DLG_SETTINGS_A_ADVANCED_01"
         , "DLG_SETTINGS_A_ADVANCED_02"
@@ -2021,14 +1991,10 @@ function loadSettingStrings() {
         , "DLG_SETTINGS_4_CONN_04" // "Random"
         , "DLG_SETTINGS_7_TRANSFERCAP_12" // "Reset History"
         , "DLG_SETTINGS_A_ADVANCED_05" // "Set"
-        , "DLG_SETTINGS_D_REMOTE_04" // "Learn more"
-        , "DLG_SETTINGS_D_REMOTE_09" // "Sign in..."
-
     ]);
     
     _loadStrings("text", [
           "DLG_SETTINGS_MENU_TITLE" // "Settings"
-          , "STATUS_REMOTE_10"
           , "logout"
     ]);
 
@@ -2059,7 +2025,7 @@ function loadGlobalStrings() {
 function loadLangStrings(reload, sTableLoad, newLang) {
     if (reload) {
         var loaded = false;
-        var lang_path = (config.utweb && ! config.webui) ? '/static/webui/lang/' : 'lang/';
+        var lang_path = 'lang/';
         Asset.javascript(lang_path + reload.lang + ".js", {
             "onload": function() {
                 if (loaded) return;

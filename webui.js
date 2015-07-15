@@ -10,7 +10,7 @@ var LANG_LIST = LANG_LIST || {};
 var urlBase = window.location.pathname.substr(0, window.location.pathname.indexOf("/gui"));
 
 window.guiBase = urlBase + "/gui/";
-window.proxyBase = urlBase + "/proxy"; // TODO: set to /api whenever we rename the variable
+window.apiBase = urlBase + "/api";
 
 var utWebUI = {
     "torrents": {},
@@ -315,10 +315,6 @@ var utWebUI = {
         this.config = Object.merge({}, this.defConfig); // deep copy default config
         this.config.lang = "";
         
-        this.bindUsernameFieldInputValidation();
-        this.bindPasswordFieldInputValidation();
-        this.bindRemoteSwitch();
-        
         // Calculate index of some columns for ease of reference elsewhere
         this.trtColDoneIdx = this.trtColDefs.map(function(item) { return (item[0] == "done"); }).indexOf(true);
         this.trtColStatusIdx = this.trtColDefs.map(function(item) { return (item[0] == "status"); }).indexOf(true);
@@ -391,101 +387,74 @@ var utWebUI = {
         }, this);
     },
 
-    "request": function(qs, fn, async, fails) {
+    "request2": function(method, params, fn, fails) {
         if (typeOf(fails) != 'array') fails = [0]; // array so to pass by reference
 
         var self = this;
-
-            var really_async = true;
-            if (really_async !== undefined) {
-                really_async = async;
-            }
-
-        if (window.getraptor) {/*
-            var params = qs.split('&');
-            var d = {};
-            for (var i=0; i<params.length; i++) {
-                var kv = params[i].split('=');
-                if (kv.length == 2) {
-                    if (kv[0] != 'token') {
-                        d[kv[0]] = decodeURIComponent(kv[1]);
-                    }
-                }
-            }*/
-            return getraptor().post_raw( qs, {}, fn ? fn.bind(self) : function(resp) {}, fails, {async:async} );
-        }
-
-        var req = function() {
-            try {
-                new Request.JSON({
-                    "url": guiBase + "?token=" + self.TOKEN + "&" + qs + "&t=" + Date.now(),
-                    "method": "get",
-                    "async": typeof(async) === 'undefined' || !!async,
-                    "onFailure": function() {
-                        // TODO: Need to be able to distinguish between recoverable and unrecoverable errors...
-                        //       Recoverable errors should be retried, unrecoverable errors should not.
-                        //       This is not possible without backend cooperation, because as of uTorrent 2.1,
-                        //       the backend returns the same error code/message whether or not the error is
-                        //       recoverable. Examples:
-                        //       - Recoverable: Bad token (just get a new token)
-                        //       - Unrecoverable: "/gui/?action=setsetting&s=webui.cookie&v=..." failing
-
-                        self.endPeriodicUpdate();
-
-                        fails[0]++;
-                        var delay = Math.pow(self.limits.reqRetryDelayBase, fails[0]);
-                        if (fails[0] <= self.limits.reqRetryMaxAttempts) {
-                            log("Request failure #" + fails[0] + " (will retry in " + delay + " seconds): " + qs);
-                        }
-                        else {
-                            window.removeEvents("unload");
-                            self.showMsg(
-                                '<p>WebUI is having trouble connecting to &micro;Torrent.</p>' +
-                                '<p>Try <a href="#" onclick="window.location.reload(true);">reloading</a> the page.</p>'
-                            );
-                            return;
-                        }
-
-                        self.TOKEN = "";
-                        self.request.delay(delay * 1000, self, [qs, function(json) {
-                            if (fails[0]) {
-                                fails[0] = 0;
-                                    // Make sure callback gets called only once. Otherwise, WebUI may
-                                    // hammer the backend with tons of requests after failure recovery (to
-                                    // be exact, it may spam as many requests as there have been failures)
-
-                                log("Request retry succeeded: " + qs);
-                                if (fn) fn.delay(0, self, json);
-                                self.beginPeriodicUpdate();
-                            }
-                        }, async, fails]);
-                    },
-                    "onSuccess": (fn) ? fn.bind(self) : Function.from()
-                }).send();
-            } catch(e){}
+        var req = {
+            jsonrpc: "2.0",
+            id: 1,
+            method: method,
+            params: params || []
         };
 
-        if (!self.TOKEN)
-            self.requestToken(req, true);
-        else
-            req();
+        try {
+            new Request.JSON({
+                "url": apiBase,
+                "headers": {
+                    "Authorization": "Token my-token"
+                },
+                "method": "post",
+                "onFailure": function() {
+                    // TODO: Need to be able to distinguish between recoverable and unrecoverable errors...
+                    //       Recoverable errors should be retried, unrecoverable errors should not.
+                    //       This is not possible without backend cooperation, because as of uTorrent 2.1,
+                    //       the backend returns the same error code/message whether or not the error is
+                    //       recoverable. Examples:
+                    //       - Recoverable: Bad token (just get a new token)
+                    //       - Unrecoverable: "/gui/?action=setsetting&s=webui.cookie&v=..." failing
+
+                    self.endPeriodicUpdate();
+
+                    fails[0]++;
+                    var delay = Math.pow(self.limits.reqRetryDelayBase, fails[0]);
+                    if (fails[0] <= self.limits.reqRetryMaxAttempts) {
+                        log("Request failure #" + fails[0] + " (will retry in " + delay + " seconds): " + method);
+                    }
+                    else {
+                        window.removeEvents("unload");
+                        self.showMsg(
+                            '<p>WebUI is having trouble connecting to &micro;Torrent.</p>' +
+                            '<p>Try <a href="#" onclick="window.location.reload(true);">reloading</a> the page.</p>'
+                        );
+                        return;
+                    }
+
+                    self.request.delay(delay * 1000, self, [qs, function(json) {
+                        if (fails[0]) {
+                            fails[0] = 0;
+                                // Make sure callback gets called only once. Otherwise, WebUI may
+                                // hammer the backend with tons of requests after failure recovery (to
+                                // be exact, it may spam as many requests as there have been failures)
+
+                            log("Request retry succeeded: " + qs);
+                            if (fn) fn.delay(0, self, json);
+                            self.beginPeriodicUpdate();
+                        }
+                    }, async, fails]);
+                },
+                "onSuccess": function(data) {
+                    var callback = (fn) ? fn.bind(self) : Function.from();
+                    callback(data.result);
+                }
+            }).send(JSON.stringify(req));
+        } catch(e) {
+            console.log(e);
+        }
     },
 
-    "requestToken": function(fn, async) {
-        var self = this;
-        try {
-            new Request({
-                "url": guiBase + "token.html?t=" + Date.now(),
-                "method": "get",
-                "async": !!async,
-                "onFailure": (fn) ? fn.bind(self) : Function.from(),
-                "onSuccess": function(str) {
-                    var match = str.match(/>([^<]+)</);
-                    if (match) self.TOKEN = match[match.length - 1];
-                    if (fn) fn.delay(0);
-                }
-            }).send();
-        } catch(e){}
+    "request": function(qs, fn, async, fails) {
+        console.log("old request: " + qs);
     },
 
     "perform": function(action) {
@@ -899,7 +868,7 @@ var utWebUI = {
         qs = qs || "";
         if (qs != "")
             qs += "&";
-        this.request(qs + "list=1&cid=" + this.cacheID + "&getmsg=1", (function(json) {
+        this.request2("webui.list", [], (function(json) {
             this.loadList(json);
             if (fn) fn(json);
         }).bind(this));
@@ -2323,7 +2292,7 @@ var utWebUI = {
             this.addSettings(json, fn);
         }).bind(this);
 
-        this.request("action=getsettings", act);
+        this.request2("webui.getSettings", [], act);
     },
 
     "addSettings": function(json, fn) {
@@ -2597,9 +2566,6 @@ var utWebUI = {
             $("mainStatusBar").hide();
 
         this.toggleSearchBar();
-        // Convert brand name
-        this.convertBrandName();
-
     },
 
     "setSettings": function() {
@@ -2770,299 +2736,6 @@ var utWebUI = {
 
         this.toggleSearchBar();
         resizeUI();
-    },
-
-    "registerRemote": function() {
-        var username_control = $("webui.uconnect_username");
-        var password_control = $("proposed_uconnect_password");
-        if (!username_control || !password_control)
-            return;
-        var uc_enable = 0;
-        var enable_control = $("webui.uconnect_enable");
-        if (enable_control)
-            uc_enable = enable_control.checked ? 1 : 0;
-        if (0 == uc_enable) {
-            // Can't register without enabling remote access
-            this.showRemoteStatus(10);
-            return;
-        }
-        var uc_username = username_control.get("value");
-        var uc_password = password_control.get("value");
-        // Ensure required fields have values
-        if (0 == uc_username.length || 0 == uc_password.length) {
-            // Either username or password is empty
-            this.showRemoteStatus(4);
-            return;
-        }
-
-        if (!this.validUsernameOnSubmit(uc_username)) {
-            this.showRemoteStatus(6);
-            return;
-        }
-        if (!this.validPasswordOnSubmit(uc_password)) {
-            this.showRemoteStatus(7);
-            return;
-        }
-
-        // Submit the request
-        var remote_success_callback = (function(json) {
-            this.presentRemoteSuccessResults(json);
-        }).bind(this);
-
-        var remote_failure_callback = (function(json) {
-            this.presentRemoteFailureResults(json);
-        }).bind(this);
-
-        this.disableRegistrationOptions();
-        this.sendRemoteRegistrationRequest(uc_username, uc_password, remote_success_callback, remote_failure_callback, {async:true});       
-
-        // Rex: old way of sending request. The reason I change this is that I need to pass failure call back into 
-        // post_raw. However in method "request" the "fails" parameter doesn't do what I want to do.
-        // this.request("action=configremote&u=" + uc_username + "&p=" + uc_password, remote_result_callback);
-    },
-
-    bindUsernameFieldInputValidation: function() {
-        var parent = this;
-        var username_input = jQuery("#webui\\.uconnect_username");
-        var password_input = jQuery("#proposed_uconnect_password");
-        var submit_btn = jQuery("#DLG_SETTINGS_D_REMOTE_09");
-        var status_input = jQuery("#webui\\.uconnect_cred_status");
-
-        username_input.keyup(function() {
-            if(parent.validateUconnectParamters(username_input.val(), 128)) {
-                status_input.text("");
-                submit_btn.removeAttr("disabled");
-                if (submit_btn.is('.disabled')) {
-                    submit_btn.removeClass("disabled");
-                }
-                password_input.removeAttr("disabled");
-            } else {
-                parent.showRemoteStatus(6);
-                submit_btn.attr("disabled", "disabled");
-                submit_btn.addClass("disabled");
-                password_input.attr("disabled", "disabled");
-            }
-        });
-    },
-
-    bindPasswordFieldInputValidation: function() {
-        var parent = this;
-        var username_input = jQuery("#webui\\.uconnect_username");
-        var password_input = jQuery("#proposed_uconnect_password");
-        var submit_btn = jQuery("#DLG_SETTINGS_D_REMOTE_09");
-        var status_input = jQuery("#webui\\.uconnect_cred_status");
-
-        password_input.keyup(function() {
-            if(parent.validateUconnectParamters(password_input.val(), 128)) {
-                status_input.text("");
-                submit_btn.removeAttr("disabled");
-                if (submit_btn.is(".disabled")) {
-                    submit_btn.removeClass("disabled");
-                }
-                username_input.removeAttr("disabled");
-            } else {
-                parent.showRemoteStatus(7);
-                submit_btn.attr("disabled", "disabled");
-                submit_btn.addClass("disabled");
-                username_input.attr("disabled", "disabled");
-            }
-        });
-
-    },
-    
-
-    bindRemoteSwitch: function() {
-        var parent = this;
-        var remote_switch = jQuery("#webui\\.uconnect_enable");
-        var status_input = jQuery("#webui\\.uconnect_cred_status");
-        var password_input = jQuery("#proposed_uconnect_password");
-
-        remote_switch.click(function() {
-            if (!remote_switch.is(":checked")) {
-                status_input.text("");  
-                password_input.val("");
-                parent.saveRemoteSignOutStatus();
-            }
-        });
-    },
-
-    saveRemoteEnableStatus: function(username) {
-        var str = "&s=webui.uconnect_enable&v=1&s=webui.uconnect_username&v=" + username;
-        if (username) {
-            this.request("action=setsetting" + str, Function.from(), true);
-        }
-    },
-
-    saveRemoteSignOutStatus: function() {
-        var str = "&s=webui.uconnect_enable&v=0";
-        this.request("action=setsetting" + str, this.presentRemoteSignOutSuccessResults, true);
-    },
-
-    validPasswordOnSubmit: function(password) {
-        return this.validateUconnectParamters(password, 128);
-    },
-
-    validUsernameOnSubmit: function(username) {
-        return this.validateUconnectParamters(username, 128);
-    },
-
-    validateUconnectParamters: function(text, max_length) {
-        if (text.length > max_length) {
-            return false;
-        }
-
-        for (var i = 0; i < text.length; ++i) {
-            if (text.charCodeAt(i) <= 32 || text.charCodeAt(i) > 126) {
-                return false;
-            }
-        }
-        return true;
-    },
-
-    "sendRemoteRegistrationRequest": function(username, password, success_cb, fail_cb, options) {
-        var qs = "action=configremote&u=" + username + "&p=" + password;
-        getraptor().post_raw(qs, {}, success_cb, fail_cb, options);
-    },
-
-    "presentRemoteFailureResults": function(json) {
-        this.enableRegistrationOptions();
-        this.showRemoteStatus(json.code);
-    },
-
-    "presentRemoteSuccessResults": function(json) {
-        var username = $("webui.uconnect_username").get("value");
-        this.saveRemoteEnableStatus(username);
-        this.enableRegistrationOptions();
-        this.showRemoteStatus(json.code);
-    },
-
-    presentRemoteSignOutSuccessResults: function() {
-        this.showRemoteStatus(-2);
-    },
-
-    "disableRegistrationOptions": function() {
-        this.showRemoteStatus(-1);
-
-        jQuery("#webui\\.uconnect_username").attr("disabled", "disabled");
-        jQuery("#proposed_uconnect_password").attr("disabled", "disabled");
-        jQuery("#DLG_SETTINGS_D_REMOTE_09").attr("disabled", "disabled");
-        jQuery("#DLG_SETTINGS_D_REMOTE_09").addClass("disabled");
-        jQuery("#webui\\.uconnect_enable").attr("disabled", "disabled");
-    },
-
-    "enableRegistrationOptions": function() {
-        jQuery("#webui\\.uconnect_username").removeAttr("disabled");
-        jQuery("#proposed_uconnect_password").removeAttr("disabled");
-        jQuery("#DLG_SETTINGS_D_REMOTE_09").removeAttr("disabled");
-        jQuery("#DLG_SETTINGS_D_REMOTE_09").removeClass("disabled");
-        jQuery("#webui\\.uconnect_enable").removeAttr("disabled");
-    },
-
-    "showRemoteStatus": function(statusCode) {
-        var status_input = jQuery("#webui\\.uconnect_cred_status");
-        var signin_btn = jQuery("#DLG_SETTINGS_D_REMOTE_09");
-        switch(statusCode) {
-            case 1: {
-                status_input.css("color", "green");
-                status_input.text(L_("STATUS_REMOTE_01"));
-                signin_btn.addClass("disabled");
-                signin_btn.attr("disabled", "disabled");
-                break;
-            }
-            case 2: {
-                status_input.css("color", "red");
-                status_input.text(L_("STATUS_REMOTE_07"));
-                break;
-            }
-            case 3: {
-                status_input.css("color", "red");
-                status_input.text("Peer block");
-                break;
-            }
-            case 4: {
-                status_input.css("color", "red");
-                status_input.text(L_("STATUS_REMOTE_05"));
-                break;
-            }
-            case 5: {
-                status_input.css("color", "red");
-                status_input.text("Security answer doesn't match");
-                break;
-            }
-            case 6: {
-                status_input.css("color", "red");
-                status_input.text(L_("STATUS_REMOTE_08"));
-                break;
-            }
-            case 7: {
-                status_input.css("color", "red");
-                status_input.text(L_("STATUS_REMOTE_09"));
-                break;
-            }
-            case 8: {
-                status_input.css("color", "red");
-                status_input.text("Another configuration attempt is in progress");
-                break;
-            }
-            case 9: {
-                status_input.css("color", "red");
-                status_input.text("Attempting to configure using authentication that doesn't support configuration");
-                break;
-            }
-            case 10: {
-                status_input.css("color", "red");
-                status_input.text("Can't register without enabling remote access");
-                break;
-            }
-            case -1: {
-                status_input.css("color", "black");
-                status_input.text(L_("STATUS_REMOTE_02"));
-                break;
-            }
-            case -2: {
-                status_input.css("color", "black");
-                status_input.text(L_("STATUS_REMOTE_03"));
-                break;
-            }
-            case undefined: {
-                // When request timed out, there will be no status code provide
-                status_input.css("color", "red");
-                status_input.text(L_("STATUS_REMOTE_04"));
-                break;
-            }
-            default: {
-                status_input.css("color", "black");
-                status_input.text(L_("STATUS_REMOTE_03"));
-                break;
-            }
-        }
-    },
-
-    "convertBrandName": function() {
-        // Work around to switch between uTorrent and BitTorrent brand name according to the product
-        var id_list = [
-                        "tab_title_dlgSettings-Remote",
-                        "DLG_SETTINGS_D_REMOTE_02",
-                        "DLG_SETTINGS_D_REMOTE_03",
-                        "DLG_SETTINGS_D_REMOTE_05",
-                        "DLG_SETTINGS_C_ADV_CACHE_02",
-                        "DLG_SETTINGS_8_QUEUEING_12"
-                        ],
-            bt_brand = "BitTorrent",
-            ut_brand = String.fromCharCode(181) + "Torrent",
-            self = this;
-
-        for (var i = 0; i < id_list.length; i++) {
-            var id = id_list[i];
-            var dom_obj = document.getElementById(id);
-            if (document.brand === "ut") {
-                var new_str = self.str_replace(dom_obj.innerHTML, bt_brand, ut_brand);
-                dom_obj.innerHTML = new_str;
-            } else {
-                var new_str = self.str_replace(dom_obj.innerHTML, ut_brand, bt_brand);
-                dom_obj.innerHTML = new_str;
-            }
-        }
     },
 
     "str_replace": function(base_str, old_str, new_str) {
@@ -5110,7 +4783,8 @@ var utWebUI = {
             this.config.activeSettingsPane = id;
         }
 
-        jQuery('#dlgSettings-title').text(document.getElementById('tab_title_' + id).innerHTML || L_("ST_CAPT_GENERAL"));
+        console.log("JQUERY");
+        //jQuery('#dlgSettings-title').text(document.getElementById('tab_title_' + id).innerHTML || L_("ST_CAPT_GENERAL"));
     },
 
     "fdFormatRow": function(values, index) {
