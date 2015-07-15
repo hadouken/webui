@@ -977,8 +977,11 @@ var utWebUI = {
         this.cacheID = json.torrentc;
 
         // Extract Labels
-            if (! json.label) { this.loadLabels(Array.clone([])); }
-            else { this.loadLabels(Array.clone(json.label)); }
+        if (!json.label) {
+            this.loadLabels(Array.clone([]));
+        } else {
+            this.loadLabels(Array.clone(json.label));
+        }
 
         // Extract Torrents
         (function(deltaLists) {
@@ -3585,10 +3588,15 @@ var utWebUI = {
     "showDetails": function(id) {
         var force = (id !== undefined);
 
-        if (force) this.torrentID = id;
-        else id = this.torrentID;
+        if (force) {
+            this.torrentID = id;
+        } else {
+            id = this.torrentID;
+        }
 
-        if (!(this.config || {}).showDetails) return;
+        if (!(this.config || {}).showDetails) {
+            return;
+        }
 
         switch (this.mainTabs.active) { // TODO: Cleanup... (don't allow direct access to internals)
             case "mainInfoPane-generalTab":
@@ -3737,17 +3745,17 @@ var utWebUI = {
     },
 
     "getPeers": function(id, forceload) {
+        if (id === undefined) {
+            id = this.torrentID;
+        }
 
-{ // TODO: Remove this once backend support is stable (requires 3.0+)
-    if (undefined === this.settings["webui.uconnect_enable"]) return;
-}
-
-        if (id === undefined) id = this.torrentID;
-        if (!id) return;
+        if (!id) {
+            return;
+        }
 
         var now = Date.now();
         if (forceload || this.peerlist._ID_ !== id || !this.peerlist._TIME_ || (now - this.peerlist._TIME_) > (this.limits.minPeerListCache * 1000)) {
-            this.request("action=getpeers&hash=" + id, (function(json) {
+            this.request2("webui.getPeers", [ id ], (function(json) {
                 this.peerlist.empty();
 
                 var peers = json.peers;
@@ -3794,7 +3802,7 @@ var utWebUI = {
 
         var now = Date.now();
         if (forceload || this.filelist._ID_ !== id || !this.filelist._TIME_ || (now - this.filelist._TIME_) > (this.limits.minFileListCache * 1000)) {
-            this.request("action=getfiles&hash=" + id, (function(json) {
+            this.request2("webui.getFiles", [ id ], (function(json) {
                 this.filelist.empty();
 
                 var files = json.files;
