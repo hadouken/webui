@@ -1,105 +1,140 @@
-/*
-Copyright (c) 2011 BitTorrent, Inc. All rights reserved.
-
-Use of this source code is governed by a BSD-style that can be
-found in the LICENSE file.
-*/
-
-//================================================================================
-// LOGGER
-//================================================================================
-
 var Logger = {
-
-    "element": null,
-    "log_date": false,
-
-    "init": function(element) {
-        this.element = $(element);
+    element: null,
+    log_date: false,
+    init: function(a) {
+        this.element = document.id(a)
     },
-
-    "log": function() {
-        if (!this.element) return;
-        var text = Array.prototype.slice.call(arguments).join(" ");
-        var dt = new Date();
-
-        var YYYY = dt.getFullYear();
-        var MM = dt.getMonth() + 1; MM = (MM < 10 ? "0" + MM : MM);
-        var DD = dt.getDate(); DD = (DD < 10 ? "0" + DD : DD);
-
-        var hh = dt.getHours(); hh = (hh < 10 ? "0" + hh : hh);
-        var mm = dt.getMinutes(); mm = (mm < 10 ? "0" + mm : mm);
-        var ss = dt.getSeconds(); ss = (ss < 10 ? "0" + ss : ss);
-
-        var time = (
-            (this.log_date ? YYYY + "-" + MM + "-" + DD + " " : "") +
-            hh + ":" + mm + ":" + ss
-        );
-
-        this.element.grab(new Element("p")
-            .grab(new Element("span.timestamp", {"text": "[" + time + "] "}))
-            .appendText(text)
-        );
-
-        this.scrollBottom();
+    log: function() {
+        if (!this.element) {
+            return
+        }
+        var a = (new Date()).format((this.log_date ? "%Y-%m-%d " : "") + "%H:%M:%S");
+        var b = Array.from(arguments).join(" ");
+        this.element.grab(new Element("p").grab(new Element("span.timestamp", {
+            text: "[" + a + "] "
+        })).appendText(b));
+        this.scrollBottom()
     },
-
-    "scrollBottom": function() {
-        if (!this.element) return;
+    scrollBottom: function() {
+        if (!this.element) {
+            return
+        }
         this.element.scrollTo(0, this.element.getScrollSize().y)
     },
-
-    "setLogDate": function(log_date) {
-        this.log_date = !!log_date;
+    setLogDate: function(a) {
+        this.log_date = !!a
     }
 };
-
-function log() {
-    Logger.log.apply(Logger, arguments);
-}
-
-//================================================================================
-// BROWSER CONSOLE
-//================================================================================
-/*
-window.onerror = function(msg, url, linenumber) {
-    log("JS error: [" + url.split("/").slice(-1)[0] + ":" + linenumber + "] " + msg);
-    //return true;
-};
-*/
-
-if (! window.console) { window.console = {};
-console.log = function(str) {
-    if (window.opera) {
-        opera.postError(str);
-    } else {
-        log(str);
+var Overlay = {
+    element: null,
+    msgBody: null,
+    init: function(a) {
+        this.element = document.id(a);
+        this.msgBody = this.element.getElement(".msg")
+    },
+    err: function(a) {
+        var b = [];
+        switch (typeof(a)) {
+            case "object":
+                for (var c in a) {
+                    b.push(c.toUpperCase() + " : " + a[c])
+                }
+                break;
+            default:
+                b.push(a)
+        }
+        this.msg('<p>An error has occurred.</p><textarea readonly="readonly" class="error">' + (new Element("p", {
+            text: b.join("\n\n")
+        })).get("html") + '</textarea><p>Try <a href="#" onclick="window.location.reload(true);">reloading</a> the page.</p>')
+    },
+    hide: function() {
+        if (!this.element) {
+            return
+        }
+        this.element.hide()
+    },
+    msg: function(a) {
+        if (!this.msgBody) {
+            return
+        }
+        if (typeOf(a) === "element") {
+            this.msgBody.clear().grab(a)
+        } else {
+            this.msgBody.set("html", a)
+        }
+        this.show()
+    },
+    show: function() {
+        if (!this.element) {
+            return
+        }
+        this.element.show()
+    },
+    visible: function() {
+        if (!this.element) {
+            return false
+        }
+        return (this.element.getStyle("display").trim().toLowerCase() !== "none")
     }
 };
-}
-
-
-if (! console.assert) {
-console.assert = function() {
-    var args = Array.from(arguments), expr = args.shift();
-    if (!expr) {
-        throw new Error(false);
+(function(c) {
+    c.log = function() {
+        Logger.log.apply(Logger, arguments)
+    };
+    c.onerror = function(g, f, e) {
+        log("JS error: [" + f.split("/").slice(-1)[0] + ":" + e + "] " + g)
+    };
+    var a = (c.console || {});
+    if (!a.log) {
+        a.log = c.log
     }
-};
-}
-
-if (! console.time) {
-var __console_timers__ = {};
-console.time = function(name) {
-    if (name == "") return;
-    __console_timers__[name] = Date.now();
-};
-}
-
-if (! console.timeEnd) {
-console.timeEnd = function(name) {
-    if (name == "" || !__console_timers__.hasOwnProperty(name)) return;
-    console.log(name + ": " + (Date.now() - __console_timers__[name]) + "ms");
-    delete __console_timers__[name];
-};
-}
+    if (!a.info) {
+        a.info = c.log
+    }
+    if (!a.warn) {
+        a.warn = c.log
+    }
+    if (!a.error) {
+        a.error = c.log
+    }
+    if (!a.debug) {
+        a.debug = c.log
+    }
+    if (!a.assert) {
+        a.assert = function() {
+            if (!arguments[0]) {
+                throw new Error(arguments[1])
+            }
+        }
+    }
+    var d = {};
+    if (!a.time) {
+        a.time = function(e) {
+            if (e) {
+                d[e] = Date.now()
+            }
+        }
+    }
+    if (!a.timeEnd) {
+        a.timeEnd = function(e) {
+            if (d.hasOwnProperty(e)) {
+                a.log(e + ": " + (Date.now() - d[e]) + "ms");
+                delete d[e]
+            }
+        }
+    }
+    var b = {};
+    if (!a.count) {
+        a.count = function(e) {
+            if (e) {
+                if (!b[e]) {
+                    b[e] = 0
+                }
+                a.log(e + ": " + (++b[e]))
+            }
+        }
+    }
+    if (!c.console) {
+        c.console = a
+    }
+})(this);

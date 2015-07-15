@@ -1,243 +1,203 @@
-/*
-Copyright (c) 2011 BitTorrent, Inc. All rights reserved.
-
-Use of this source code is governed by a BSD-style that can be
-found in the LICENSE file.
-*/
-(function($){
-
 var DialogManager = {
-
-    "winZ": 500,
-    "items": {},
-    "showing": [],
-
-    "init": function() {
-        // Create popup dialog
-        var dlgPopupId = this.create("Popup");
+    winZ: 500,
+    items: {},
+    showing: [],
+    init: function() {
+        var a = this.create("Popup");
         this.add("Popup");
-
-        $(dlgPopupId).getElement(".dlg-body").adopt(
-            new Element("span", {id: dlgPopupId + "-message"}),
-            new Element("div.textarea_wrap").grab(
-                new Element("textarea.wide", {
-                    id: dlgPopupId + "-input",
-                    styles: { marginTop: "5px" }
-                }).setProperty("wrap", "off")
-            )
-        );
+        $(a).getElement(".dlg-body").adopt(new Element("span", {
+            id: a + "-message"
+        }), new Element("div.textarea_wrap").grab(new Element("textarea.wide", {
+            id: a + "-input",
+            styles: {
+                marginTop: "5px"
+            }
+        }).setProperty("wrap", "off")))
     },
-
-    "create": function(id) {
-        var dlgId = "dlg" + id;
-
-        var dlgWindow = new Element("div.dlg-window", {id: dlgId}).adopt(
-              new Element("a.dlg-close", {href: "#"})
-            , new Element("div.dlg-head", {id: dlgId + "-head"})
-            , new Element("form", {action: ""}).adopt(
-                  new Element("div.dlg-body")
-                , new Element("div.dlg-foot")
-            ).addEvent("submit", Function.from(false))
-        ).inject(document.body);
-
-        return dlgId;
+    create: function(c) {
+        var b = "dlg" + c;
+        var a = new Element("div.dlg-window", {
+            id: b
+        }).adopt(new Element("a.dlg-close", {
+            href: "#"
+        }), new Element("div.dlg-head", {
+            id: b + "-head"
+        }), new Element("form", {
+            action: ""
+        }).adopt(new Element("div.dlg-body"), new Element("div.dlg-foot")).addEvent("submit", Function.from(false))).inject(document.body);
+        return b
     },
-
-    "popup": function(options) {
-        options = options || {};
-        var opt;
-
-        var id = "Popup"
-        var dlgId = "dlg" + id;
-
-        var dlgWin = $(dlgId);
-        var dlgHead = dlgWin.getElement(".dlg-head");
-        var dlgFoot = dlgWin.getElement(".dlg-foot");
-
-        var dlgMsg = $(dlgId + "-message");
-        var dlgInput = $(dlgId + "-input");
-
-        // Clear previous configuration
-        if ((opt = dlgHead.retrieve("icon"))) {
-            dlgHead.removeClass(opt);
+    popup: function(l) {
+        l = l || {};
+        var d;
+        var c = "Popup";
+        var j = "dlg" + c;
+        var a = $(j);
+        var e = a.getElement(".dlg-head");
+        var g = a.getElement(".dlg-foot");
+        var h = $(j + "-message");
+        var k = $(j + "-input");
+        if ((d = e.retrieve("icon"))) {
+            e.removeClass(d)
         }
-
-        dlgFoot.set("html", "");
-
-        // Set text
-        dlgHead.set("text", options.title || "");
-        dlgMsg.set("text", options.message || "");
-        dlgInput.set("value", options.input || "");
-
-        // Set icon
-        if ((opt = options.icon || "")) {
-            dlgHead.store("icon", opt);
-            dlgHead.addClass(opt);
+        g.set("html", "");
+        e.set("text", l.title || "");
+        h.set("text", l.message || "");
+        k.set("value", l.input || "");
+        if ((d = l.icon || "")) {
+            e.store("icon", d);
+            e.addClass(d)
         }
-
-        // Set buttons
-        var btnFocus;
-        if ((opt = options.buttons || []).length) {
-            var $me = this;
-            opt.each(function(btn) {
-                var ele = new Element("input.btn", {
-                    type: btn.submit ? "submit" : "button",
-                    value: btn.text
-                }).addStopEvent("click", function(ev) {
-                    if (typeof(btn.click) === 'function') {
-                        if (btn.click(dlgInput.get("value")) === false) {
-                            return;
+        var i;
+        if ((d = l.buttons || []).length) {
+            var f = this;
+            d.each(function(m) {
+                var n = new Element("input.btn", {
+                    type: m.submit ? "submit" : "button",
+                    value: m.text
+                }).addStopEvent("click", function(o) {
+                    if (typeof(m.click) === "function") {
+                        if (m.click(k.get("value")) === false) {
+                            return
                         }
                     }
-
-                    $me.hide(id);
+                    f.hide(c)
                 });
-                
-                dlgFoot.grab(ele).appendText(" ");
-                if (btn.focus) btnFocus = ele;
+                g.grab(n).appendText(" ");
+                if (m.focus) {
+                    i = n
+                }
             })
         }
-
-        // Set dimensions
-        var width = [options.width, "25em"].pick();
-        dlgWin.setStyle("width", width);
-        if (undefined !== options.input) {
-            dlgInput.measure(function() {
-                var lines = (options.input.split("\n").length || 1).min(5);
-                dlgInput.setStyle("height", (lines * 1.3) + "em");
-
-                // Make room for horizontal scrollbar
-                var dims = dlgInput.getDimensions({computeSize: true});
-                var bordY = dims["border-bottom-width"] + dims["border-top-width"];
-                var sbHeight = dlgInput.offsetHeight - (dlgInput.clientHeight + bordY);
-
-                if (sbHeight > 0) {
-                    dlgInput.setStyle("height", dlgInput.offsetHeight - bordY + sbHeight);
+        var b = [l.width, "25em"].pick();
+        a.setStyle("width", b);
+        if (undefined !== l.input) {
+            k.measure(function() {
+                var n = (l.input.split("\n").length || 1).min(5);
+                k.setStyle("height", (n * 1.3) + "em");
+                var p = k.getDimensions({
+                    computeSize: true
+                });
+                var o = p["border-bottom-width"] + p["border-top-width"];
+                var m = k.offsetHeight - (k.clientHeight + o);
+                if (m > 0) {
+                    k.setStyle("height", k.offsetHeight - o + m)
                 }
-            });
+            })
         }
-
-        // Finish
-        this.items[id].modal = !![options.modal, true].pick();
-        this.show(id);
-
-        if (undefined !== options.input) {
-            dlgInput.show();
-            dlgInput.select();
-            dlgInput.focus();
-        }
-        else {
-            dlgInput.hide();
-            if (btnFocus) {
-                btnFocus.focus();
+        this.items[c].modal = !![l.modal, true].pick();
+        this.show(c);
+        if (undefined !== l.input) {
+            k.show();
+            k.select();
+            k.focus()
+        } else {
+            k.hide();
+            if (i) {
+                i.focus()
             }
         }
     },
-
-    "add": function(id, isModal, showCB) {
-        if (has(this.items, id)) return;
-
-        this.items[id] = {"modal": !!isModal, "onShow": showCB};
-
-        var dlgId = "dlg" + id;
-        if (! $(dlgId)) { return; }
-        $(dlgId)
-            .addEvent("mousedown", this.bringToFront.bind(this, id))
-            .getElement(".dlg-close").addStopEvent("click", this.hide.bind(this, id));
-
-        new Drag(dlgId, {
-            "handle": dlgId + "-head",
-            "snap": 1
-        });
-    },
-
-    "show": function(id) {
-        if (!ContextMenu.hidden)
-            ContextMenu.hide();
-
-        this.bringToFront(id);
-
-        if (this.items[id].modal)
-            $("modalbg").show().setStyle("zIndex", this.winZ);
-        else if (!this.modalIsVisible())
-            $("modalbg").hide();
-
-        if (this.isOffScreen(id))
-            $("dlg" + id).centre();
-
-        if (this.items[id].onShow)
-            this.items[id].onShow();
-    },
-
-    "hide": function(id) {
-        var dlgWin = $("dlg" + id);
-
-        dlgWin.hide();
-        if (dlgWin.contains(document.activeElement)) {
-            document.activeElement.blur();
+    add: function(d, c, a) {
+        if (has(this.items, d)) {
+            return
         }
-
-        this.showing = this.showing.erase(id);
-
-        if (this.items[id].modal) {
-            var topModal = this.getTopModal();
-            if (topModal)
-                $("modalbg").setStyle("zIndex", $("dlg" + topModal).getStyle("zIndex"));
-            else
-                $("modalbg").hide();
+        this.items[d] = {
+            modal: !!c,
+            onShow: a
+        };
+        var b = "dlg" + d;
+        $(b).addEvent("mousedown", this.bringToFront.bind(this, d)).getElement(".dlg-close").addStopEvent("click", this.hide.bind(this, d));
+        new Drag(b, {
+            handle: b + "-head",
+            snap: 1
+        })
+    },
+    show: function(a) {
+        if (!ContextMenu.hidden) {
+            ContextMenu.hide()
         }
-
-        if (this.showing.length)
-            this.bringToFront(this.showing.getLast());
-    },
-
-    "hideTopMost": function(fireClose) {
-        if (!this.showing.length) return;
-
-        var id = this.showing.pop();
-        this.hide(id);
-
-        if (fireClose)
-            $("dlg" + id).getElement(".dlg-close").fireEvent("click", { stop: Function.from() });
-    },
-
-    "isOffScreen": function(id) {
-        var threshX = 150, threshY = 50;
-        var winSize = window.getSize();
-        var head = $("dlg" + id + "-head").getCoordinates();
-
-        return (
-            (head.left > winSize.x - threshX) ||
-            (head.right < threshX) ||
-            (head.top > winSize.y - threshY) ||
-            (head.bottom < threshY)
-        );
-    },
-
-    "bringToFront": function(id) {
-        this.showing = this.showing.erase(id);
-
-        if (this.showing.length)
-            $("dlg" + this.showing.getLast()).removeClass("dlg-top");
-
-        this.showing.push(id);
-        $("dlg" + id).addClass("dlg-top").setStyle("zIndex", ++this.winZ);
-    },
-
-    "getTopModal": function() {
-        for (var i = this.showing.length - 1; i >= 0; --i) {
-            if (this.items[this.showing[i]].modal) {
-                return this.showing[i];
+        this.bringToFront(a);
+        if (this.items[a].modal) {
+            $("modalbg").show().setStyle("zIndex", this.winZ)
+        } else {
+            if (!this.modalIsVisible()) {
+                $("modalbg").hide()
             }
         }
-        return null;
+        if (this.isOffScreen(a)) {
+            $("dlg" + a).center()
+        }
+        if (this.items[a].onShow) {
+            this.items[a].onShow()
+        }
     },
-
-    "modalIsVisible": function() {
-        return !!this.getTopModal();
+    hide: function(d) {
+        var a = $("dlg" + d);
+        a.hide();
+        try {
+            if (a.contains(document.activeElement)) {
+                document.activeElement.blur();
+                document.activeElement = null
+            }
+        } catch (c) {}
+        this.showing = this.showing.erase(d);
+        if (this.items[d].modal) {
+            var b = this.getTopModal();
+            if (b) {
+                $("modalbg").setStyle("zIndex", $("dlg" + b).getStyle("zIndex"))
+            } else {
+                $("modalbg").hide()
+            }
+        }
+        if (this.showing.length) {
+            this.bringToFront(this.showing.getLast())
+        }
+    },
+    hideTopMost: function(a) {
+        if (!this.showing.length) {
+            return
+        }
+        var b = this.showing.pop();
+        this.hide(b);
+        if (a) {
+            $("dlg" + b).getElement(".dlg-close").fireEvent("click", {
+                stop: Function.from()
+            })
+        }
+    },
+    isOffScreen: function(e) {
+        var b = 150,
+            a = 50;
+        var c = window.getSize();
+        var d = $("dlg" + e + "-head").getCoordinates();
+        return ((d.left > c.x - b) || (d.right < b) || (d.top > c.y - a) || (d.bottom < a))
+    },
+    bringToFront: function(d) {
+        this.showing = this.showing.erase(d);
+        if (this.showing.length) {
+            $("dlg" + this.showing.getLast()).removeClass("dlg-top")
+        }
+        this.showing.push(d);
+        var c = $("dlg" + d);
+        c.addClass("dlg-top").setStyle("zIndex", ++this.winZ);
+        try {
+            var a = document.activeElement;
+            if (a && (a !== document.body) && !c.contains(a)) {
+                a.blur();
+                document.activeElement = null
+            }
+        } catch (b) {}
+    },
+    getTopModal: function() {
+        for (var a = this.showing.length - 1; a >= 0; --a) {
+            if (this.items[this.showing[a]].modal) {
+                return this.showing[a]
+            }
+        }
+        return null
+    },
+    modalIsVisible: function() {
+        return !!this.getTopModal()
     }
 };
-
-window.DialogManager = DialogManager;
-
-})(document.id); // mootools $ is document.id

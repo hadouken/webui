@@ -1,10 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <!--
-Copyright (c) 2012 BitTorrent, Inc. All rights reserved.
-
+Copyright (c) 2011 BitTorrent, Inc. All rights reserved.
 Use of this source code is governed by a BSD-style that can be
 found in the LICENSE file.
-
 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
@@ -12,7 +10,6 @@ found in the LICENSE file.
         <title></title>
         <link href="./images/ut_small.png" rel="icon" type="image/png" />
         <link href="./main.css" rel="stylesheet" type="text/css" />
-        <link href="./dialogs.css" rel="stylesheet" type="text/css" />
         <link href="./stable.css" rel="stylesheet" type="text/css" />
         <!--[if IE]>
         <script type="text/javascript" src="./ie.js"></script>
@@ -20,44 +17,93 @@ found in the LICENSE file.
         <![endif]-->
     </head>
     <body>
-        <div id="cover">
-            <div id="msgout"><div id="msgmid"><div id="msg">
-                <img src="./images/snake.gif" alt="Loading..." />
-                Loading...
-            </div></div></div>
+        <div id="overlay">
+            <div class="msgout">
+                <div class="msgmid">
+                    <div class="msg">
+                        <img src="./images/snake.gif" alt="Loading..." /> Loading...
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="modalbg"></div>
-
+        
         <!-- /* About Dialog -->
         <div id="dlgAbout" class="dlg-window">
             <a href="#" class="dlg-close"></a>
             <div id="dlgAbout-head" class="dlg-head">About</div>
             <div class="dlg-body">
                 <img id="dlgAbout-logo" src="./images/ut.png" alt="uTorrent" />
-                <span id="dlgAbout-name">&micro;Torrent WebUI</span><br />
+                <span id="dlgAbout-name">&micro;Torrent WebUI</span>
+                <br />
                 <span id="dlgAbout-version"></span>
-
                 <div id="dlgAbout-credits">
-                    <div><strong>Developers:</strong>
-                        <div>
-                            Carsten Niebuhr (Directrix)<br />
-                            Ultima
+                    <div>
+                        <strong>Developers:</strong>
+                        <div>Carsten Niebuhr (Directrix)
+                            <br /> Ultima
                         </div>
                     </div>
-                    <div><strong>Contributors:</strong>
-                        <div>Firon, icleolion, <a href="http://www.ignorantcow.net/" target="_blank">Ignorantcow</a>, Novik, <a href="http://outfitfox.blogspot.com/" target="_blank">savaden</a>, shawnz</div>
+                    <div>
+                        <strong>Contributors:</strong>
+                        <div>Firon, icleolion, 
+                            <a href="http://www.ignorantcow.net/" target="_blank">Ignorantcow</a>, Novik, 
+                            <a href="http://outfitfox.blogspot.com/" target="_blank">savaden</a>, shawnz
+                        </div>
                     </div>
-                    <div><strong>Artwork:</strong>
-                        <div>(Flags) <a href="http://forum.utorrent.com/viewtopic.php?id=2070" target="_blank">Flags</a> by eng</div>
-                        <div>(Icons) <a href="http://www.famfamfam.com/lab/icons/silk/" target="_blank">Silk</a> by Mark James</div>
+                    <div>
+                        <strong>Artwork:</strong>
+                        <div>(Flags) 
+                            <a href="http://forum.utorrent.com/viewtopic.php?id=2070" target="_blank">Flags</a> by eng
+                        </div>
+                        <div>(Icons) 
+                            <a href="http://www.famfamfam.com/lab/icons/silk/" target="_blank">Silk</a> by Mark James
+                        </div>
                     </div>
-                    <div id="mootools"><a href="http://www.mootools.net/" target="_blank"><img src="./images/mootools.png" alt="MooTools" /></a></div>
+                    <div id="mootools">
+                        <a href="http://www.mootools.net/" target="_blank">
+                            <img src="./images/mootools.png" alt="MooTools" />
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- About Dialog */ -->
-
+        <!-- /* Reset UI Dialog -->
+        <div id="dlgResetUI" class="dlg-window">
+            <!-- TODO: Localize -->
+            <a href="#" class="dlg-close"></a>
+            <div id="dlgResetUI-head" class="dlg-head">Reset UI</div>
+            <form id="dlgResetUI-form" action="">
+                <div class="dlg-body">Select the WebUI settings to reset. 
+                    <fieldset>
+                        <legend id="">Options</legend>
+                        <div class="line-cont">
+                            <input type="checkbox" id="dlgResetUI-everything" />
+                            <label id="" for="dlgResetUI-everything">Everything</label>
+                        </div>
+                        <div class="line-cont indent">
+                            <input type="checkbox" id="dlgResetUI-interface" class="reset-subopt" checked="checked" />
+                            <label id="" for="dlgResetUI-interface">User interface settings</label>
+                        </div>
+                        <div class="line-cont indent">
+                            <input type="checkbox" id="dlgResetUI-grid" class="reset-subopt" checked="checked" />
+                            <label id="" for="dlgResetUI-grid">Grid configuration</label>
+                        </div>
+                        <div class="line-cont indent">
+                            <input type="checkbox" id="dlgResetUI-cookie" class="reset-subopt" />
+                            <label id="" for="dlgResetUI-cookie">Managed cookies</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="dlg-foot">
+                    <input type="submit" id="RESET_UI_OK" class="btn" />
+                    <input type="button" id="RESET_UI_CANCEL" class="btn" />
+                </div>
+            </form>
+        </div>
+        <!-- Reset UI Dialog */ -->
         <!-- /* Torrent Add Dialog -->
         <div id="dlgAdd" class="dlg-window">
             <a href="#" class="dlg-close"></a>
@@ -68,10 +114,10 @@ found in the LICENSE file.
                         <input type="file" id="dlgAdd-file" name="torrent_file" multiple="multiple" class="fbox flr" />
                         <label for="dlgAdd-file">Torrent file:</label>
                     </div>
-
-                    <fieldset><!-- TODO: Localize -->
+                    <fieldset>
+                        <!-- TODO: Localize -->
                         <legend>Options</legend>
-                        <div id="dlgAdd-basePathDiv" class="line-cont">
+                        <div class="line-cont">
                             <select id="dlgAdd-basePath" class="tbox flr">
                                 <option value="0">Default download directory</option>
                             </select>
@@ -90,35 +136,6 @@ found in the LICENSE file.
             </form>
         </div>
         <!-- Torrent Add Dialog */ -->
-
-        <!-- /* Torrent Delete Dialog -->
-        <div id="dlgDelete" class="dlg-window">
-            <a href="#" class="dlg-close"></a>
-            <div id="dlgDelete-head" class="dlg-head">Delete Torrents</div>
-            <form id="dlgDelete-form" action="">
-                <div class="dlg-body">
-                    <h4 id="dlgDelete-caption">Are you sure you want to remove <span class="count">1</span> torrent<span class="plural">s</span>?</h4>
-                    <div class="line-cont">
-                        <input type="radio" name="dlgDelete-torrent" id="dlgDelete-no-data" value="torrent" checked="checked" />
-                        <label for="dlgDelete-no-data">Just delete torrent</label>
-                    </div>
-                    <div class="line-cont">
-                        <input type="radio" name="dlgDelete-torrent" id="dlgDelete-data" value="delete_data" />
-                        <label for="dlgDelete-data">Also delete torrent data</label>
-                    </div>
-                    <!-- <div class="line-cont">
-                        <input type="radio" name="dlgDelete-torrent" id="dlgDelete-data" value="keep_torrent" />
-                        <label for="dlgDelete-data">Only delete data</label>
-                    </div> -->
-                </div>
-                <div class="dlg-foot">
-                    <input type="submit" id="DELETE_TORRENT_OK" class="btn" value="OK" />
-                    <input type="button" id="DELETE_TORRENT_CANCEL" class="btn" value="Cancel" />
-                </div>
-            </form>
-        </div>
-        <!-- Torrent Delete Dialog */ -->
-
         <!-- /* Torrent Add URL Dialog -->
         <div id="dlgAddURL" class="dlg-window">
             <a href="#" class="dlg-close"></a>
@@ -130,13 +147,16 @@ found in the LICENSE file.
                         <label for="dlgAddURL-url">Torrent URL:</label>
                     </div>
                     <div class="line-cont">
-                        <input type="text" id="dlgAddURL-cookie" class="tbox flr" />
+                        <div class="flr">
+                            <input type="text" id="dlgAddURL-cookie" class="tbox" />
+                            <input type="button" id="dlgAddURL-cookieDetect" class="btn" value="Detect" />
+                        </div>
                         <label for="dlgAddURL-cookie">Cookies:</label>
                     </div>
-
-                    <fieldset><!-- TODO: Localize -->
+                    <fieldset>
+                        <!-- TODO: Localize -->
                         <legend>Options</legend>
-                        <div id="dlgAddURL-basePathDiv" class="line-cont">
+                        <div class="line-cont">
                             <select id="dlgAddURL-basePath" class="tbox flr">
                                 <option value="0">Default download directory</option>
                             </select>
@@ -155,7 +175,6 @@ found in the LICENSE file.
             </form>
         </div>
         <!-- Torrent Add URL Dialog */ -->
-
         <!-- /* Torrent Properties Dialog -->
         <div id="dlgProps" class="dlg-window">
             <a href="#" class="dlg-close"></a>
@@ -164,9 +183,10 @@ found in the LICENSE file.
                 <div class="dlg-body">
                     <fieldset>
                         <legend id="DLG_TORRENTPROP_1_GEN_01"></legend>
-                        <div class="textarea_wrap"><textarea id="prop-trackers" rows="" cols="" wrap="off" class="wide"></textarea></div>
+                        <div class="textarea_wrap">
+                            <textarea id="prop-trackers" rows="" cols="" wrap="off" class="wide"></textarea>
+                        </div>
                     </fieldset>
-
                     <fieldset>
                         <legend id="DLG_TORRENTPROP_1_GEN_03"></legend>
                         <div class="line-cont">
@@ -182,7 +202,6 @@ found in the LICENSE file.
                             <label for="prop-ulslots" id="DLG_TORRENTPROP_1_GEN_08"></label>
                         </div>
                     </fieldset>
-
                     <fieldset>
                         <legend id="DLG_TORRENTPROP_1_GEN_10"></legend>
                         <div class="line-cont">
@@ -197,28 +216,13 @@ found in the LICENSE file.
                             <input type="text" id="prop-seed_time" class="tbox num flr" />
                             <label for="prop-seed_time" id="DLG_TORRENTPROP_1_GEN_14"></label>
                         </div>
-                        <div class="line-cont">
-                            <input type="text" id="prop-seed_num" class="tbox num flr" />
-                            <label for="prop-seed_num" id="DLG_TORRENTPROP_1_GEN_20"></label>
-                        </div>
                     </fieldset>
-
                     <fieldset>
                         <legend id="DLG_TORRENTPROP_1_GEN_16"></legend>
                         <div class="line-cont">
                             <div class="fll">
                                 <input type="checkbox" id="prop-superseed" />
                                 <label for="prop-superseed" id="DLG_TORRENTPROP_1_GEN_17"></label>
-                            </div>
-                            <div class="half flr">
-                                <input type="checkbox" id="prop-pex" />
-                                <label for="prop-pex" id="DLG_TORRENTPROP_1_GEN_19"></label>
-                            </div>
-                        </div>
-                        <div class="line-cont">
-                            <div class="fll">
-                                <input type="checkbox" id="prop-dht" />
-                                <label for="prop-dht" id="DLG_TORRENTPROP_1_GEN_18"></label>
                             </div>
                             <div class="half flr">
                             </div>
@@ -232,7 +236,6 @@ found in the LICENSE file.
             </form>
         </div>
         <!-- Torrent Properties Dialog */ -->
-
         <!-- /* Add/Edit RSS Feed Dialog -->
         <div id="dlgAddEditRSSFeed" class="dlg-window">
             <a href="#" class="dlg-close"></a>
@@ -240,12 +243,18 @@ found in the LICENSE file.
             <form id="dlgAddEditRSSFeed-form" action="">
                 <div class="dlg-body">
                     <input type="hidden" id="aerssfd-id" />
-
                     <fieldset id="dlgAddEditRSSFeed-feed">
                         <legend id="DLG_ADDEDITRSSFEED_03"></legend>
                         <div class="line-cont">
                             <input type="text" id="aerssfd-url" class="tbox flr" />
                             <label for="aerssfd-url" id="DLG_ADDEDITRSSFEED_04"></label>
+                        </div>
+                        <div class="line-cont">
+                            <div class="flr">
+                                <input type="text" id="aerssfd-cookie" class="tbox" />
+                                <input type="button" id="aerssfd-cookieDetect" class="btn" value="Detect" />
+                            </div>
+                            <label for="aerssfd-cookie">Cookies:</label>
                         </div>
                         <div class="line-cont">
                             <div class="fll">
@@ -255,7 +264,6 @@ found in the LICENSE file.
                             <input type="text" id="aerssfd-custom_alias" class="tbox flr" />
                         </div>
                     </fieldset>
-
                     <fieldset id="dlgAddEditRSSFeed-subscription">
                         <legend id="DLG_ADDEDITRSSFEED_06"></legend>
                         <div class="line-cont">
@@ -279,7 +287,6 @@ found in the LICENSE file.
             </form>
         </div>
         <!-- Add/Edit RSS Feed Dialog */ -->
-
         <!-- /* RSS Downloader Dialog -->
         <div id="dlgRSSDownloader" class="dlg-window">
             <a href="#" class="dlg-close"></a>
@@ -288,22 +295,26 @@ found in the LICENSE file.
                 <ul id="dlgRSSDownloader-tabs" class="folder-tabs"></ul>
                 <div id="dlgRSSDownloader-content">
                     <div id="dlgRSSDownloader-feedsTab">
-                        <div id="dlgRSSDownloader-feedsMenu"><div class="fll">
-                            <ul id="dlgRSSDownloader-feeds">
-                                <li id="rssfeed_all"><span class="icon"></span> <span id="DLG_RSSDOWNLOADER_03"></span></li>
-                            </ul>
-                        </div></div>
-
+                        <div id="dlgRSSDownloader-feedsMenu">
+                            <div class="fll">
+                                <ul id="dlgRSSDownloader-feeds">
+                                    <li id="rssfeed_all">
+                                        <span class="icon"></span>
+                                        <span id="DLG_RSSDOWNLOADER_03"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                         <div id="dlgRSSDownloader-feedItemList"></div>
                     </div>
                     <div id="dlgRSSDownloader-filtersTab">
-                        <div id="dlgRSSDownloader-filtersMenu"><div class="fll">
-                            <ul id="dlgRSSDownloader-filters"></ul>
-                        </div></div>
-
+                        <div id="dlgRSSDownloader-filtersMenu">
+                            <div class="fll">
+                                <ul id="dlgRSSDownloader-filters"></ul>
+                            </div>
+                        </div>
                         <fieldset id="dlgRSSDownloader-filterSettings">
                             <legend id="DLG_RSSDOWNLOADER_04"></legend>
-
                             <div class="line-cont">
                                 <input type="text" id="rssfilter_name" class="tbox flr" />
                                 <label for="rssfilter_name" id="DLG_RSSDOWNLOADER_05"></label>
@@ -321,7 +332,9 @@ found in the LICENSE file.
                                 <label for="rssfilter_save_in" id="DLG_RSSDOWNLOADER_08"></label>
                             </div>
                             <div class="line-cont">
-                                <select id="rssfilter_feed" class="flr"><option>--------------------</option></select>
+                                <select id="rssfilter_feed" class="flr">
+                                    <option>--------------------</option>
+                                </select>
                                 <label for="rssfilter_feed" id="DLG_RSSDOWNLOADER_09"></label>
                             </div>
                             <div class="line-cont">
@@ -354,14 +367,15 @@ found in the LICENSE file.
                                 </div>
                             </div>
                             <div class="line-cont">
-                                <select id="rssfilter_min_interval" class="flr"><option>--------------------</option></select>
+                                <select id="rssfilter_min_interval" class="flr">
+                                    <option>--------------------</option>
+                                </select>
                                 <label for="rssfilter_min_interval" id="DLG_RSSDOWNLOADER_16"></label>
                             </div>
                             <div class="line-cont">
                                 <input type="text" id="rssfilter_label" class="tbox flr" />
                                 <label for="rssfilter_label" id="DLG_RSSDOWNLOADER_17"></label>
                             </div>
-
                             <div id="rssfilter_edit_control">
                                 <input type="button" id="rssfilter_edit_cancel" class="btn" />
                                 <input type="button" id="rssfilter_edit_apply" class="btn" />
@@ -375,28 +389,29 @@ found in the LICENSE file.
             </div>
         </div>
         <!-- RSS Downloader Dialog */ -->
-
         <!-- /* Settings Dialog -->
         <div id="dlgSettings" class="dlg-window">
             <a href="#" class="dlg-close"></a>
             <div id="dlgSettings-head" class="dlg-head"></div>
             <form id="dlgSettings-form" action="">
                 <div class="dlg-body">
-                    <div id="dlgSettings-menuCont"><div class="fll">
-                        <ul id="dlgSettings-menu"></ul>
-                    </div></div>
-
+                    <div id="dlgSettings-menuCont">
+                        <div class="fll">
+                            <ul id="dlgSettings-menu"></ul>
+                        </div>
+                    </div>
                     <div id="dlgSettings-General" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_1_GENERAL_01"></legend>
                             <div class="line-cont">
                                 <div>
-                                    <select id="webui.lang" class="flr" ><option>--------------------</option></select>
+                                    <select id="webui.lang" class="flr">
+                                        <option>--------------------</option>
+                                    </select>
                                     <label for="webui.lang" id="DLG_SETTINGS_1_GENERAL_02"></label>
                                 </div>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_1_GENERAL_10"></legend>
                             <div class="line-cont">
@@ -414,7 +429,6 @@ found in the LICENSE file.
                                 <label for="anoninfo" id="DLG_SETTINGS_1_GENERAL_13"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_1_GENERAL_17"></legend>
                             <div class="line-cont">
@@ -433,7 +447,6 @@ found in the LICENSE file.
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-UISettings" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_2_UI_01"></legend>
@@ -468,7 +481,6 @@ found in the LICENSE file.
                                 </div>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_2_UI_15"></legend>
                             <div class="line-cont">
@@ -486,20 +498,22 @@ found in the LICENSE file.
                                 <label for="show_add_dialog" id="DLG_SETTINGS_2_UI_18"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_2_UI_19"></legend>
                             <div class="line-cont">
-                                <select id="gui.dblclick_seed" class="flr"><option value="0">------------------------------</option></select>
+                                <select id="gui.dblclick_seed" class="flr">
+                                    <option value="0">------------------------------</option>
+                                </select>
                                 <label for="gui.dblclick_seed" id="DLG_SETTINGS_2_UI_20"></label>
                             </div>
                             <div class="line-cont">
-                                <select id="gui.dblclick_dl" class="flr"><option value="0">------------------------------</option></select>
+                                <select id="gui.dblclick_dl" class="flr">
+                                    <option value="0">------------------------------</option>
+                                </select>
                                 <label for="gui.dblclick_dl" id="DLG_SETTINGS_2_UI_22"></label>
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-Directories" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_3_PATHS_01"></legend>
@@ -513,7 +527,9 @@ found in the LICENSE file.
                                     <label for="always_show_add_dialog" id="DLG_SETTINGS_3_PATHS_03"></label>
                                 </div>
                             </div>
-                            <div class="line-cont indent"><input type="text" id="dir_active_download" class="tbox wide" /></div>
+                            <div class="line-cont indent">
+                                <input type="text" id="dir_active_download" class="tbox wide" />
+                            </div>
                             <div class="line-cont">
                                 <div class="fll">
                                     <input type="checkbox" id="dir_completed_download_flag" />
@@ -524,25 +540,30 @@ found in the LICENSE file.
                                     <label for="dir_add_label" id="DLG_SETTINGS_3_PATHS_07"></label>
                                 </div>
                             </div>
-                            <div class="line-cont indent"><input type="text" id="dir_completed_download" class="tbox wide" /></div>
+                            <div class="line-cont indent">
+                                <input type="text" id="dir_completed_download" class="tbox wide" />
+                            </div>
                             <div class="line-cont indent">
                                 <input type="checkbox" id="move_if_defdir" />
                                 <label for="move_if_defdir" id="DLG_SETTINGS_3_PATHS_10"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_3_PATHS_11"></legend>
                             <div class="line-cont">
                                 <input type="checkbox" id="dir_torrent_files_flag" />
                                 <label for="dir_torrent_files_flag" id="DLG_SETTINGS_3_PATHS_12"></label>
                             </div>
-                            <div class="line-cont indent"><input type="text" id="dir_torrent_files" class="tbox wide" /></div>
+                            <div class="line-cont indent">
+                                <input type="text" id="dir_torrent_files" class="tbox wide" />
+                            </div>
                             <div class="line-cont">
                                 <input type="checkbox" id="dir_completed_torrents_flag" />
                                 <label for="dir_completed_torrents_flag" id="DLG_SETTINGS_3_PATHS_15"></label>
                             </div>
-                            <div class="line-cont indent"><input type="text" id="dir_completed_torrents" class="tbox wide" /></div>
+                            <div class="line-cont indent">
+                                <input type="text" id="dir_completed_torrents" class="tbox wide" />
+                            </div>
                             <div class="line-cont">
                                 <div class="fll">
                                     <input type="checkbox" id="dir_autoload_flag" />
@@ -553,10 +574,11 @@ found in the LICENSE file.
                                     <label for="dir_autoload_delete" id="DLG_SETTINGS_3_PATHS_19"></label>
                                 </div>
                             </div>
-                            <div class="line-cont indent"><input type="text" id="dir_autoload" class="tbox wide" /></div>
+                            <div class="line-cont indent">
+                                <input type="text" id="dir_autoload" class="tbox wide" />
+                            </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-Connection" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_4_CONN_01"></legend>
@@ -588,13 +610,14 @@ found in the LICENSE file.
                                 </div>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_4_CONN_08"></legend>
                             <div class="line-cont">
                                 <div class="fll">
                                     <label id="DLG_SETTINGS_4_CONN_09"></label>
-                                    <select id="proxy.type"><option value="0">----------</option></select>
+                                    <select id="proxy.type">
+                                        <option value="0">----------</option>
+                                    </select>
                                 </div>
                                 <div class="flr">
                                     <label for="proxy.proxy" id="DLG_SETTINGS_4_CONN_11"></label>
@@ -624,7 +647,6 @@ found in the LICENSE file.
                                 <label for="proxy.p2p" id="DLG_SETTINGS_4_CONN_20"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_4_CONN_22"></legend>
                             <div class="line-cont">
@@ -641,7 +663,6 @@ found in the LICENSE file.
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-Bandwidth" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_5_BANDWIDTH_01"></legend>
@@ -657,7 +678,6 @@ found in the LICENSE file.
                                 <input type="text" id="max_ul_rate_seed" class="tbox num flr" maxlength="6" />
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_5_BANDWIDTH_07"></legend>
                             <div class="line-cont">
@@ -665,7 +685,6 @@ found in the LICENSE file.
                                 <label for="max_dl_rate" id="DLG_SETTINGS_5_BANDWIDTH_08"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_5_BANDWIDTH_18"></legend>
                             <div class="line-cont">
@@ -677,7 +696,6 @@ found in the LICENSE file.
                                 <label for="net.ratelimit_utp" id="DLG_SETTINGS_5_BANDWIDTH_20"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_5_BANDWIDTH_10"></legend>
                             <div class="line-cont">
@@ -698,7 +716,6 @@ found in the LICENSE file.
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-BitTorrent" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_6_BITTORRENT_01"></legend>
@@ -747,13 +764,14 @@ found in the LICENSE file.
                                 <label id="DLG_SETTINGS_6_BITTORRENT_08"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_6_BITTORRENT_10"></legend>
                             <div class="line-cont">
                                 <div class="fll">
                                     <label id="DLG_SETTINGS_6_BITTORRENT_11"></label>
-                                    <select id="encryption_mode"><option>---------------</option></select>
+                                    <select id="encryption_mode">
+                                        <option>---------------</option>
+                                    </select>
                                 </div>
                                 <div class="half flr">
                                     <input type="checkbox" id="encryption_allow_legacy" />
@@ -762,30 +780,33 @@ found in the LICENSE file.
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-TransferCap" class="settings-pane">
                         <div class="line-cont">
                             <input type="checkbox" id="multi_day_transfer_limit_en" />
                             <label for="multi_day_transfer_limit_en" id="DLG_SETTINGS_7_TRANSFERCAP_01"></label>
                         </div>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_7_TRANSFERCAP_02"></legend>
                             <div class="line-cont">
-                                <select id="multi_day_transfer_mode" class="flr"><option>--------------------</option></select>
+                                <select id="multi_day_transfer_mode" class="flr">
+                                    <option>--------------------</option>
+                                </select>
                                 <label for="multi_day_transfer_mode" id="DLG_SETTINGS_7_TRANSFERCAP_03"></label>
                             </div>
                             <div class="line-cont">
-                                <select id="multi_day_transfer_limit_unit" class="flr"><option>-----</option></select>
+                                <select id="multi_day_transfer_limit_unit" class="flr">
+                                    <option>-----</option>
+                                </select>
                                 <input type="text" id="multi_day_transfer_limit_value" class="tbox num flr" />
                                 <label for="multi_day_transfer_limit_value" id="DLG_SETTINGS_7_TRANSFERCAP_04"></label>
                             </div>
                             <div class="line-cont">
-                                <select id="multi_day_transfer_limit_span" class="flr"><option>-----</option></select>
+                                <select id="multi_day_transfer_limit_span" class="flr">
+                                    <option>-----</option>
+                                </select>
                                 <label for="multi_day_transfer_limit_span" id="DLG_SETTINGS_7_TRANSFERCAP_05"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_7_TRANSFERCAP_06"></legend>
                             <div class="line-cont">
@@ -809,7 +830,6 @@ found in the LICENSE file.
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-Queueing" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_8_QUEUEING_01"></legend>
@@ -822,7 +842,6 @@ found in the LICENSE file.
                                 <label for="max_active_downloads" id="DLG_SETTINGS_8_QUEUEING_04"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_8_QUEUEING_06"></legend>
                             <div class="line-cont">
@@ -838,7 +857,6 @@ found in the LICENSE file.
                                 <label for="seeds_prioritized" id="DLG_SETTINGS_8_QUEUEING_11"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_8_QUEUEING_12"></legend>
                             <div class="line-cont">
@@ -850,29 +868,38 @@ found in the LICENSE file.
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-Scheduler" class="settings-pane">
                         <div class="line-cont">
                             <input type="checkbox" id="sched_enable" />
                             <label for="sched_enable" id="DLG_SETTINGS_9_SCHEDULER_01"></label>
                         </div>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_9_SCHEDULER_02"></legend>
                             <table id="sched_table" cellpadding="0" cellspacing="0"></table>
                             <div id="sched_table_lgnd">
                                 <ul>
-                                    <li id="sched_table_lgnd_off"><span class="block mode2">&nbsp;</span><span id="ST_SCH_LGND_OFF"></span></li>
-                                    <li id="sched_table_lgnd_seeding"><span class="block mode3">&nbsp;</span><span id="ST_SCH_LGND_SEEDING"></span></li>
+                                    <li id="sched_table_lgnd_off">
+                                        <span class="block mode2">&nbsp;</span>
+                                        <span id="ST_SCH_LGND_OFF"></span>
+                                    </li>
+                                    <li id="sched_table_lgnd_seeding">
+                                        <span class="block mode3">&nbsp;</span>
+                                        <span id="ST_SCH_LGND_SEEDING"></span>
+                                    </li>
                                 </ul>
                                 <ul>
-                                    <li id="sched_table_lgnd_full"><span class="block mode0">&nbsp;</span><span id="ST_SCH_LGND_FULL"></span></li>
-                                    <li id="sched_table_lgnd_limited"><span class="block mode1">&nbsp;</span><span id="ST_SCH_LGND_LIMITED"></span></li>
+                                    <li id="sched_table_lgnd_full">
+                                        <span class="block mode0">&nbsp;</span>
+                                        <span id="ST_SCH_LGND_FULL"></span>
+                                    </li>
+                                    <li id="sched_table_lgnd_limited">
+                                        <span class="block mode1">&nbsp;</span>
+                                        <span id="ST_SCH_LGND_LIMITED"></span>
+                                    </li>
                                 </ul>
                             </div>
                             <div id="sched_table_info"></div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_9_SCHEDULER_04"></legend>
                             <div class="line-cont">
@@ -893,13 +920,11 @@ found in the LICENSE file.
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-Remote" class="settings-pane">
                         <div class="line-cont">
                             <input type="checkbox" id="webui.uconnect_enable" />
                             <label for="webui.uconnect_enable" id="DLG_SETTINGS_10_REMOTE_02"></label>
                         </div>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_10_REMOTE_03"></legend>
                             <div class="line-cont">
@@ -914,7 +939,6 @@ found in the LICENSE file.
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-Advanced" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_A_ADVANCED_01"></legend>
@@ -932,13 +956,14 @@ found in the LICENSE file.
                                     </span>
                                 </span>
                                 <span id="dlgSettings-advText-cont">
-                                    <span id="dlgSettings-advText-wrap"><input type="text" id="dlgSettings-advText" class="tbox" /></span>
+                                    <span id="dlgSettings-advText-wrap">
+                                        <input type="text" id="dlgSettings-advText" class="tbox" />
+                                    </span>
                                     <input type="button" id="DLG_SETTINGS_A_ADVANCED_05" class="btn" />
                                 </span>
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-UIExtras" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_B_ADV_UI_01"></legend>
@@ -955,18 +980,17 @@ found in the LICENSE file.
                                 <label for="gui.ulrate_menu" id="DLG_SETTINGS_B_ADV_UI_05"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_B_ADV_UI_07"></legend>
                             <input type="text" id="gui.persistent_labels" class="tbox wide" />
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_B_ADV_UI_08"></legend>
-                            <div class="textarea_wrap"><textarea id="search_list" rows="" cols="" wrap="off" class="wide"></textarea></div>
+                            <div class="textarea_wrap">
+                                <textarea id="search_list" rows="" cols="" wrap="off" class="wide"></textarea>
+                            </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-DiskCache" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_C_ADV_CACHE_01"></legend>
@@ -983,7 +1007,6 @@ found in the LICENSE file.
                                 <label for="cache.reduce" id="DLG_SETTINGS_C_ADV_CACHE_05"></label>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_C_ADV_CACHE_06"></legend>
                             <div class="line-cont">
@@ -1024,13 +1047,11 @@ found in the LICENSE file.
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-WebUI" class="settings-pane">
                         <div class="line-cont">
                             <input type="checkbox" id="webui.enable" />
                             <label for="webui.enable" id="DLG_SETTINGS_9_WEBUI_01"></label>
                         </div>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_9_WEBUI_02"></legend>
                             <div class="line-cont">
@@ -1053,7 +1074,6 @@ found in the LICENSE file.
                                 </div>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend id="DLG_SETTINGS_9_WEBUI_09"></legend>
                             <div class="line-cont">
@@ -1070,8 +1090,8 @@ found in the LICENSE file.
                                 <input type="text" id="webui.restrict" class="tbox wide" />
                             </div>
                         </fieldset>
-
-                        <fieldset><!-- TODO: Localize -->
+                        <fieldset>
+                            <!-- TODO: Localize -->
                             <legend>User Interface</legend>
                             <div class="half fll">
                                 <div class="line-cont">
@@ -1107,7 +1127,6 @@ found in the LICENSE file.
                             </div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-RunProgram" class="settings-pane">
                         <fieldset>
                             <legend id="DLG_SETTINGS_C_ADV_RUN_01"></legend>
@@ -1122,18 +1141,22 @@ found in the LICENSE file.
                             <div id="DLG_SETTINGS_C_ADV_RUN_06" style="margin-top: 5px; white-space: pre-wrap;"></div>
                         </fieldset>
                     </div>
-
                     <div id="dlgSettings-CookieManager" class="settings-pane">
                         <fieldset>
-                            <legend id="">Cookie Manager</legend> <!-- TODO: Localize -->
+                            <legend id="">Cookie Manager</legend>
+                            <!-- TODO: Localize -->
                             <div id="dlgSettings-cookieList"></div>
                             <div id="dlgSettings-cookieInput">
                                 <div class="line-cont">
-                                    <span id="dlgSettings-cookieDomain-wrap"><input type="text" id="dlgSettings-cookieDomain" class="tbox flr" /></span>
+                                    <span id="dlgSettings-cookieDomain-wrap">
+                                        <input type="text" id="dlgSettings-cookieDomain" class="tbox flr" />
+                                    </span>
                                     <label for="dlgSettings-cookieDomain">Domain:</label>
                                 </div>
                                 <div class="line-cont">
-                                    <span id="dlgSettings-cookieData-wrap"><input type="text" id="dlgSettings-cookieData" class="tbox flr" /></span>
+                                    <span id="dlgSettings-cookieData-wrap">
+                                        <input type="text" id="dlgSettings-cookieData" class="tbox flr" />
+                                    </span>
                                     <label for="dlgSettings-cookieData">Data:</label>
                                 </div>
                                 <div class="line-cont flr">
@@ -1151,61 +1174,73 @@ found in the LICENSE file.
             </form>
         </div>
         <!-- Settings Dialog */ -->
-
         <!-- /* Toolbar -->
         <div id="mainToolbar">
             <div id="mainToolbar-searchbar">
-                <input type="text" id="query" /><a href="#" id="search"></a><a href="#" id="searchsel"></a>
+                <input type="text" id="query" />
+                <a href="#" id="search"></a>
+                <a href="#" id="searchsel"></a>
             </div>
             <a href="#" id="tbchevron">&raquo;</a>
-
             <a href="#" id="add" class="tbbutton inchev"></a>
             <a href="#" id="addurl" class="tbbutton inchev"></a>
-
             <div class="separator inchev"></div>
-
             <a href="#" id="remove" class="tbbutton inchev"></a>
-
             <div class="separator inchev"></div>
-
             <a href="#" id="start" class="tbbutton inchev"></a>
             <a href="#" id="pause" class="tbbutton inchev"></a>
             <a href="#" id="stop" class="tbbutton inchev"></a>
-
             <div class="separator inchev"></div>
-
             <a href="#" id="queueup" class="tbbutton inchev"></a>
             <a href="#" id="queuedown" class="tbbutton inchev"></a>
-
             <div class="separator inchev"></div>
-
             <a href="#" id="rssdownloader" class="tbbutton inchev"></a>
             <a href="#" id="setting" class="tbbutton inchev"></a>
         </div>
         <!-- Toolbar */ -->
-
         <!-- /* Category/Label List -->
-        <div id="mainCatList"><div class="fll">
-            <ul id="mainCatList-categories">
-                <li id="cat_all"><span class="icon"></span> <span id="OV_CAT_ALL"></span>&nbsp;(<span id="cat_all_c">0</span>)</li>
-                <li id="cat_dls"><span class="icon"></span> <span id="OV_CAT_DL"></span>&nbsp;(<span id="cat_dls_c">0</span>)</li>
-                <li id="cat_com"><span class="icon"></span> <span id="OV_CAT_COMPL"></span>&nbsp;(<span id="cat_com_c">0</span>)</li>
-                <li id="cat_act"><span class="icon"></span> <span id="OV_CAT_ACTIVE"></span>&nbsp;(<span id="cat_act_c">0</span>)</li>
-                <li id="cat_iac"><span class="icon"></span> <span id="OV_CAT_INACTIVE"></span>&nbsp;(<span id="cat_iac_c">0</span>)</li>
-            </ul>
-
-            <hr />
-
-            <ul id="mainCatList-labels">
-                <li id="cat_nlb"><span id="OV_CAT_NOLABEL"></span>&nbsp;(<span id="cat_nlb_c">0</span>)</li>
-            </ul>
-        </div></div>
+        <div id="mainCatList">
+            <div class="fll">
+                <ul id="mainCatList-categories">
+                    <li id="cat_all">
+                        <span class="icon"></span>
+                        <span id="OV_CAT_ALL"></span>&nbsp;(
+                        <span id="cat_all_c">0</span>)
+                    </li>
+                    <li id="cat_dls">
+                        <span class="icon"></span>
+                        <span id="OV_CAT_DL"></span>&nbsp;(
+                        <span id="cat_dls_c">0</span>)
+                    </li>
+                    <li id="cat_com">
+                        <span class="icon"></span>
+                        <span id="OV_CAT_COMPL"></span>&nbsp;(
+                        <span id="cat_com_c">0</span>)
+                    </li>
+                    <li id="cat_act">
+                        <span class="icon"></span>
+                        <span id="OV_CAT_ACTIVE"></span>&nbsp;(
+                        <span id="cat_act_c">0</span>)
+                    </li>
+                    <li id="cat_iac">
+                        <span class="icon"></span>
+                        <span id="OV_CAT_INACTIVE"></span>&nbsp;(
+                        <span id="cat_iac_c">0</span>)
+                    </li>
+                </ul>
+                <hr />
+                <ul id="mainCatList-labels">
+                    <li id="cat_nlb">
+                        <span id="OV_CAT_NOLABEL"></span>&nbsp;(
+                        <span id="cat_nlb_c">0</span>)
+                    </li>
+                </ul>
+            </div>
+        </div>
         <!-- Category/Label List */ -->
-
         <!-- /* Main List -->
         <div id="mainTorList"></div>
         <!-- Main List */ -->
-
         <!-- /* Detailed Info Pane -->
         <div id="mainInfoPane">
             <ul id="mainInfoPane-tabs" class="folder-tabs icon"></ul>
@@ -1217,28 +1252,58 @@ found in the LICENSE file.
                                 <td colspan="3" class="header" id="GN_TRANSFER"></td>
                             </tr>
                             <tr>
-                                <td style="width: 34%"><label id="GN_TP_04"></label><span id="rm"></span></td>
-                                <td style="width: 33%"><label id="GN_TP_01"></label><span id="dl"></span></td>
-                                <td style="width: 33%"><label id="GN_TP_02"></label><span id="ul"></span></td>
+                                <td style="width: 34%">
+                                    <label id="GN_TP_04"></label>
+                                    <span id="rm"></span>
+                                </td>
+                                <td style="width: 33%">
+                                    <label id="GN_TP_01"></label>
+                                    <span id="dl"></span>
+                                </td>
+                                <td style="width: 33%">
+                                    <label id="GN_TP_02"></label>
+                                    <span id="ul"></span>
+                                </td>
                             </tr>
                             <tr>
-                                <td><label id="GN_TP_08"></label><span id="ra"></span></td>
-                                <td><label id="GN_TP_05"></label><span id="ds"></span></td>
-                                <td><label id="GN_TP_06"></label><span id="us"></span></td>
+                                <td>
+                                    <label id="GN_TP_08"></label>
+                                    <span id="ra"></span>
+                                </td>
+                                <td>
+                                    <label id="GN_TP_05"></label>
+                                    <span id="ds"></span>
+                                </td>
+                                <td>
+                                    <label id="GN_TP_06"></label>
+                                    <span id="us"></span>
+                                </td>
                             </tr>
                             <tr>
-                                <td><label id="GN_TP_03"></label><span id="se"></span></td>
-                                <td><label id="GN_TP_07"></label><span id="pe"></span></td>
+                                <td>
+                                    <label id="GN_TP_03"></label>
+                                    <span id="se"></span>
+                                </td>
+                                <td>
+                                    <label id="GN_TP_07"></label>
+                                    <span id="pe"></span>
+                                </td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td colspan="3" class="header" id="GN_GENERAL"></td>
                             </tr>
                             <tr>
-                                <td colspan="3"><label id="GN_TP_09"></label><span id="sa"></span></td>
+                                <td colspan="3">
+                                    <label id="GN_TP_09"></label>
+                                    <span id="sa"></span>
+                                </td>
                             </tr>
                             <tr>
-                                <td colspan="3"><label id="GN_TP_10"></label><span id="hs"></span></td>
+                                <td colspan="3">
+                                    <label id="GN_TP_10"></label>
+                                    <span id="hs"></span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -1250,7 +1315,6 @@ found in the LICENSE file.
             </div>
         </div>
         <!-- Detailed Info Pane */ -->
-
         <!-- /* Status Bar -->
         <div id="mainStatusBar">
             <div id="mainStatusBar-menu"></div>
@@ -1258,18 +1322,14 @@ found in the LICENSE file.
             <div id="mainStatusBar-download" class="section"></div>
         </div>
         <!-- Status Bar */ -->
-
         <div id="mainVDivider"></div>
         <div id="mainHDivider"></div>
-
         <!-- [jscompact] -->
         <script type="text/javascript" src="./mootools.js"></script>
         <script type="text/javascript" src="./flotr.js"></script>
         <script type="text/javascript" src="./utils.js"></script>
-
         <script type="text/javascript" src="./constants.js"></script>
         <script type="text/javascript" src="./lang/_.js"></script>
-        <script type="text/javascript" src="./lang/fallback.js"></script>
         <script type="text/javascript" src="./logger.js"></script>
         <script type="text/javascript" src="./speedgraph.js"></script>
         <script type="text/javascript" src="./stable.js"></script>
