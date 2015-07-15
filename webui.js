@@ -9,32 +9,10 @@ found in the LICENSE file.
 var LANG_LIST = LANG_LIST || {};
 var urlBase = window.location.pathname.substr(0, window.location.pathname.indexOf("/gui"));
 
-/* there are 3 main modes of operation
-
-1) standard webui
-2) standard webui but with request wrapped (window.raptor)
-3) this is imported from the uT Remote interface (window.utweb !== undefined)
-
-*/
-if (window.utweb !== undefined || window.raptor) {
-        window.getraptor = function() {
-            if (window.utweb) { return utweb.current_client().raptor; }
-            if (window.raptor) { return raptor; }
-    }
-}
-if (! window.config.webui) {
-    var guiBase = urlBase + "/client/gui/";
-    var proxyBase = urlBase + "/client/proxy";
-} else {
-    var guiBase = urlBase + "/gui/";
-    var proxyBase = urlBase + "/proxy";
-}
-window.guiBase = guiBase;
-window.proxyBase = guiBase;
-var isGuest = window.location.pathname.test(/.*guest.html$/);
+window.guiBase = urlBase + "/gui/";
+window.proxyBase = urlBase + "/proxy"; // TODO: set to /api whenever we rename the variable
 
 var utWebUI = {
-
     "torrents": {},
     "rssfeeds": {},
     "rssfilters": {},
@@ -1554,7 +1532,7 @@ var utWebUI = {
         var trtTableUpdate = (function() {
             this.refreshSelectedTorGroups();
 
-            if (!isGuest && ev.isRightClick()) {
+            if (ev.isRightClick()) {
                 this.trtTable.fillSelection();
                 this.trtTable.fireEvent("onSelect", ev);
             }
@@ -1755,7 +1733,7 @@ var utWebUI = {
 
         this.refreshSelectedRSSFeeds();
 
-        if (!isGuest && ev.isRightClick()) {
+        if (ev.isRightClick()) {
             // Generate menu items
             var menuItems = [[L_("DLG_RSSDOWNLOADER_18"), this.showAddEditRSSFeed.bind(this, -1)]];
 
@@ -1960,7 +1938,7 @@ var utWebUI = {
             this.switchRSSFilter(element);
         }
 
-        if (!isGuest && ev.isRightClick()) {
+        if (ev.isRightClick()) {
             // Generate menu items
             var menuItems = [
                 [L_("DLG_RSSDOWNLOADER_27"),
@@ -2345,12 +2323,7 @@ var utWebUI = {
             this.addSettings(json, fn);
         }).bind(this);
 
-        if (isGuest) {
-            act();
-        }
-        else {
-            this.request("action=getsettings", act);
-        }
+        this.request("action=getsettings", act);
     },
 
     "addSettings": function(json, fn) {
@@ -2411,14 +2384,13 @@ var utWebUI = {
                     , "colWidth": cookie.fileTable.colWidth
                 });
 
-                if (!isGuest) {
-                    this.rssfdTable.setConfig({
-                          "colSort": [cookie.feedTable.sIndex, cookie.feedTable.reverse]
-                        , "colMask": cookie.feedTable.colMask
-                        , "colOrder": cookie.feedTable.colOrder
-                        , "colWidth": cookie.feedTable.colWidth
-                    });
-                }
+                this.rssfdTable.setConfig({
+                      "colSort": [cookie.feedTable.sIndex, cookie.feedTable.reverse]
+                    , "colMask": cookie.feedTable.colMask
+                    , "colOrder": cookie.feedTable.colOrder
+                    , "colWidth": cookie.feedTable.colWidth
+                });
+
                 this.tableSetMaxRows(cookie.maxRows);
             }
             
@@ -2426,69 +2398,64 @@ var utWebUI = {
             resizeUI();
         }).bind(this);
 
-        if (isGuest) {
-            loadCookie();
-        }
-        else {
-            var tcmode = 0;
-            for (var i = 0, j = json.settings.length; i < j; i++) {
-                var key = json.settings[i][CONST.SETTING_NAME],
-                    typ = json.settings[i][CONST.SETTING_TYPE],
-                    val = json.settings[i][CONST.SETTING_VALUE],
-                    par = json.settings[i][CONST.SETTING_PARAMS] || {};
+        var tcmode = 0;
+        for (var i = 0, j = json.settings.length; i < j; i++) {
+            var key = json.settings[i][CONST.SETTING_NAME],
+                typ = json.settings[i][CONST.SETTING_TYPE],
+                val = json.settings[i][CONST.SETTING_VALUE],
+                par = json.settings[i][CONST.SETTING_PARAMS] || {};
 
-                // handle cookie
-                if (key === "webui.cookie") {
-                    loadCookie(JSON.decode(val, true));
-                    continue;
-                }
-
-                // convert types
-                switch (typ) {
-                    case CONST.SETTINGTYPE_INTEGER: val = val.toInt(); break;
-                    case CONST.SETTINGTYPE_BOOLEAN: val = ('true' === val); break;
-                }
-
-                // handle special settings
-
-                switch (key) {
-                    case "multi_day_transfer_mode_ul": if (val) tcmode = 0; break;
-                    case "multi_day_transfer_mode_dl": if (val) tcmode = 1; break;
-                    case "multi_day_transfer_mode_uldl": if (val) tcmode = 2; break;
-
-                    case "gui.alternate_color": if (window.utweb === undefined) { this.tableUseAltColor(val); } break;
-                    case "gui.graph_legend": if (window.utweb === undefined) { this.spdGraph.showLegend(val); } break;
-                    case "gui.graphic_progress": if (window.utweb === undefined) { this.tableUseProgressBar(val); } break;
-                    case "gui.log_date": if (window.utweb === undefined) { Logger.setLogDate(val); } break;
-
-                    case "bt.transp_disposition": $("enable_bw_management").checked = !!(val & CONST.TRANSDISP_UTP); break;
-                }
-
-                // handle special parameters
-
-                // TODO: See if we need anything more in implementing support for par.access
-                if (CONST.SETTINGPARAM_ACCESS_RO === par.access) {
-                    var ele = $(key);
-                    if (ele) ele.addClass("disabled");
-                }
-
-                // insert into settings map and show
-                this.settings[key] = val;
-                _unhideSetting(key);
+            // handle cookie
+            if (key === "webui.cookie") {
+                loadCookie(JSON.decode(val, true));
+                continue;
             }
 
-            // Insert custom keys...
-            this.settings["multi_day_transfer_mode"] = tcmode;
-
-            { // TODO: Remove this once backend support is stable (requires 3.0+)
-                this.settings["sched_table"] = [this.settings["sched_table"], "033000330020000000000000300303003222000000000000000303003020000000000000033003003111010010100101000303003101011010100111300303003101010110100001033020330111010010110111"].pick();
-                this.settings["search_list_sel"] = [this.settings["search_list_sel"], 0].pick();
-                this.settings["search_list"] = [this.settings["search_list"], "BitTorrent|http://www.bittorrent.com/search?client=%v&search=\r\nGoogle|http://google.com/search?q=filetype%3Atorrent+\r\nMininova|http://www.mininova.org/search/?cat=0&search=\r\nVuze|http://search.vuze.com/xsearch/?q="].pick();
+            // convert types
+            switch (typ) {
+                case CONST.SETTINGTYPE_INTEGER: val = val.toInt(); break;
+                case CONST.SETTINGTYPE_BOOLEAN: val = ('true' === val); break;
             }
 
-            // Cleanup
-            delete json.settings;
+            // handle special settings
+
+            switch (key) {
+                case "multi_day_transfer_mode_ul": if (val) tcmode = 0; break;
+                case "multi_day_transfer_mode_dl": if (val) tcmode = 1; break;
+                case "multi_day_transfer_mode_uldl": if (val) tcmode = 2; break;
+
+                case "gui.alternate_color": if (window.utweb === undefined) { this.tableUseAltColor(val); } break;
+                case "gui.graph_legend": if (window.utweb === undefined) { this.spdGraph.showLegend(val); } break;
+                case "gui.graphic_progress": if (window.utweb === undefined) { this.tableUseProgressBar(val); } break;
+                case "gui.log_date": if (window.utweb === undefined) { Logger.setLogDate(val); } break;
+
+                case "bt.transp_disposition": $("enable_bw_management").checked = !!(val & CONST.TRANSDISP_UTP); break;
+            }
+
+            // handle special parameters
+
+            // TODO: See if we need anything more in implementing support for par.access
+            if (CONST.SETTINGPARAM_ACCESS_RO === par.access) {
+                var ele = $(key);
+                if (ele) ele.addClass("disabled");
+            }
+
+            // insert into settings map and show
+            this.settings[key] = val;
+            _unhideSetting(key);
         }
+
+        // Insert custom keys...
+        this.settings["multi_day_transfer_mode"] = tcmode;
+
+        { // TODO: Remove this once backend support is stable (requires 3.0+)
+            this.settings["sched_table"] = [this.settings["sched_table"], "033000330020000000000000300303003222000000000000000303003020000000000000033003003111010010100101000303003101011010100111300303003101010110100001033020330111010010110111"].pick();
+            this.settings["search_list_sel"] = [this.settings["search_list_sel"], 0].pick();
+            this.settings["search_list"] = [this.settings["search_list"], "BitTorrent|http://www.bittorrent.com/search?client=%v&search=\r\nGoogle|http://google.com/search?q=filetype%3Atorrent+\r\nMininova|http://www.mininova.org/search/?cat=0&search=\r\nVuze|http://search.vuze.com/xsearch/?q="].pick();
+        }
+
+        // Cleanup
+        delete json.settings;
 
         if (!(this.config.lang in LANG_LIST)) {
             var langList = "";
@@ -2511,7 +2478,7 @@ var utWebUI = {
         loadLangStrings({
             "lang": this.config.lang,
             "onload": (function() {
-                if (!isGuest) this.loadSettings();
+                this.loadSettings();
                 if (fn) fn();
             }).bind(this)
         });
@@ -2618,7 +2585,7 @@ var utWebUI = {
 
         this.toggleSystemFont(this.config.useSysFont);
 
-        if (!this.config.showToolbar && !isGuest)
+        if (!this.config.showToolbar)
             $("mainToolbar").hide();
         if (!this.config.showCategories)
             $("mainCatList").hide();
@@ -3641,13 +3608,13 @@ var utWebUI = {
         if (this.config.showDetails) {
             this.showDetails(id);
         }
-        if (!isGuest && ev.isRightClick()) {
+        if (ev.isRightClick()) {
             this.showTrtMenu.delay(0, this, [ev, id]);
         }
     },
 
     "trtDblClk": function(id) {
-        if (!isGuest && this.trtTable.selectedRows.length == 1) {
+        if (this.trtTable.selectedRows.length == 1) {
             var tor = this.torrents[id];
             var action = parseInt((
                 tor[CONST.TORRENT_PROGRESS] == 1000
@@ -4247,8 +4214,6 @@ var utWebUI = {
     },
 
     "showFileMenu": function(ev) {
-        if (isGuest || !ev.isRightClick()) return;
-
         var id = this.torrentID;
 
         var fileIds = this.getSelFileIds();
@@ -4425,7 +4390,7 @@ var utWebUI = {
     },
 
     "showGeneralMenu": function(ev) {
-        if (isGuest || !ev.isRightClick()) return;
+        if (!ev.isRightClick()) return;
 
         var menuItems = [
             [L_("MENU_COPY"), this.showCopy.bind(this, L_("MENU_COPY"), ev.target.get("text"))]
@@ -4608,7 +4573,7 @@ var utWebUI = {
     },
 
     "showPeerMenu": function(ev) {
-        if (isGuest || !ev.isRightClick()) return;
+        if (!ev.isRightClick()) return;
 
         var menuItems = [
               [L_("MP_RESOLVE_IPS"), this.toggleResolveIP.bind(this)]
@@ -4689,7 +4654,6 @@ var utWebUI = {
     },
 
     "flsDblClk": function(id) {
-        if (isGuest) return;
         if (this.flsTable.selectedRows.length != 1) return;
         var hash = id.match(/^(.*?)_.*$/)[1];
         var fid = id.replace(hash + '_', '').toInt() || 0;
@@ -4811,7 +4775,6 @@ var utWebUI = {
     },
 
     "saveConfig": function(async, callback) {
-        if (isGuest) return;
         this.request("action=setsetting&s=webui.cookie&v=" + JSON.encode(this.config), callback || null, async || false);
     },
 
@@ -4924,8 +4887,6 @@ var utWebUI = {
     },
 
     "updateToolbar": function() {
-        if (isGuest) return;
-
         var disabled = this.getDisabledActions();
 
         Object.each(disabled, function(disabled, name) {
@@ -5057,20 +5018,16 @@ var utWebUI = {
         this.trtTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
         this.prsTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
         this.flsTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
-        if (!isGuest) {
-            this.rssfdTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
-            this.advOptTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
-        }
+        this.rssfdTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
+        this.advOptTable.setConfig({"rowMaxCount": max || virtRows, "rowMode": mode});
     },
 
     "tableUseAltColor": function(enable) {
         this.trtTable.setConfig({"rowAlternate": enable});
         this.prsTable.setConfig({"rowAlternate": enable});
         this.flsTable.setConfig({"rowAlternate": enable});
-        if (!isGuest) {
-            this.rssfdTable.setConfig({"rowAlternate": enable});
-            this.advOptTable.setConfig({"rowAlternate": enable});
-        }
+        this.rssfdTable.setConfig({"rowAlternate": enable});
+        this.advOptTable.setConfig({"rowAlternate": enable});
     },
 
     "tableUseProgressBar": function(enable) {
@@ -5295,7 +5252,7 @@ var utWebUI = {
     },
 
     "showFeedMenu": function(ev) {
-        if (isGuest || !ev.isRightClick()) return;
+        if (!ev.isRightClick()) return;
 
         var feedItemIds = this.getSelFeedItemIds();
         if (feedItemIds.length <= 0) return;
@@ -5363,7 +5320,6 @@ var utWebUI = {
 
 }
 
-window.isGuest = isGuest;
 window.utWebUI = utWebUI;
 
 })(window.jQuery);

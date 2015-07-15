@@ -65,40 +65,36 @@ function setupWindowEvents() {
 
     window.addEvent("resize", resizeUI);
 
-    if (!isGuest) {
-        window.addEvent("unload", function() {
-            utWebUI.saveConfig(false);
-        });
-    }
+    window.addEvent("unload", function() {
+        utWebUI.saveConfig(false);
+    });
 }
 function setupDocumentEvents() {
     //--------------------------------------------------
     // DOCUMENT EVENTS
     //--------------------------------------------------
 
-    if (!isGuest) {
-        document.addStopEvents({
-            "dragenter": null,
-            "dragover": null,
-            "drop": function(ev) {
-                var dt = ev.event.dataTransfer;
-                if (!dt) return;
+    document.addStopEvents({
+        "dragenter": null,
+        "dragover": null,
+        "drop": function(ev) {
+            var dt = ev.event.dataTransfer;
+            if (!dt) return;
 
-                var data;
+            var data;
 
-                if ((data = dt.getData("Text"))) {
-                    // Text/URL dropped
-                    data = data.split(/[\r\n]+/g).map(String.trim);
-                    utWebUI.addURL({url: data});
-                }
-
-                if ((data = dt.files) && data.length > 0) {
-                    // Files dropped
-                    utWebUI.addFile({file: data});
-                }
+            if ((data = dt.getData("Text"))) {
+                // Text/URL dropped
+                data = data.split(/[\r\n]+/g).map(String.trim);
+                utWebUI.addURL({url: data});
             }
-        });
-    }
+
+            if ((data = dt.files) && data.length > 0) {
+                // Files dropped
+                utWebUI.addFile({file: data});
+            }
+        }
+    });
 }
 
 function setupMouseEvents() {
@@ -168,65 +164,63 @@ function setupKeyboardEvents() {
     // KEYBOARD EVENTS
     //--------------------------------------------------
 
-    if (!isGuest) {
-        var keyBindings = {
-            "ctrl a": Function.from(),
-            "ctrl e": Function.from(),
+    var keyBindings = {
+        "ctrl a": Function.from(),
+        "ctrl e": Function.from(),
 
-            "ctrl o": utWebUI.showAddTorrent.bind(utWebUI),
-            "ctrl p": utWebUI.showSettings.bind(utWebUI),
-            "ctrl u": utWebUI.showAddURL.bind(utWebUI),
-            "f2": utWebUI.showAbout.bind(utWebUI),
+        "ctrl o": utWebUI.showAddTorrent.bind(utWebUI),
+        "ctrl p": utWebUI.showSettings.bind(utWebUI),
+        "ctrl u": utWebUI.showAddURL.bind(utWebUI),
+        "f2": utWebUI.showAbout.bind(utWebUI),
 
-            "f4": utWebUI.toggleToolbar.bind(utWebUI),
-            "f6": utWebUI.toggleDetPanel.bind(utWebUI),
-            "f7": utWebUI.toggleCatPanel.bind(utWebUI),
+        "f4": utWebUI.toggleToolbar.bind(utWebUI),
+        "f6": utWebUI.toggleDetPanel.bind(utWebUI),
+        "f7": utWebUI.toggleCatPanel.bind(utWebUI),
 
-            "esc": function() {
-                if (!ContextMenu.hidden) {
-                    ContextMenu.hide();
-                } else if (DialogManager.showing.length > 0) {
-                    DialogManager.hideTopMost(true);
-                } else {
-                    utWebUI.restoreUI();
-                }
+        "esc": function() {
+            if (!ContextMenu.hidden) {
+                ContextMenu.hide();
+            } else if (DialogManager.showing.length > 0) {
+                DialogManager.hideTopMost(true);
+            } else {
+                utWebUI.restoreUI();
             }
-        };
-
-        var keyBindingModalOK = {
-            "esc": 1
-        };
-
-        if (Browser.Platform.mac) {
-            keyBindings["meta a"] = keyBindings["ctrl a"];
-            keyBindings["meta e"] = keyBindings["ctrl e"];
-            keyBindings["meta o"] = keyBindings["ctrl o"];
-            keyBindings["meta p"] = keyBindings["ctrl p"];
-            keyBindings["meta u"] = keyBindings["ctrl u"];
-
-            delete keyBindings["ctrl a"];
-            delete keyBindings["ctrl e"];
-            delete keyBindings["ctrl o"];
-            delete keyBindings["ctrl p"];
-            delete keyBindings["ctrl u"];
         }
+    };
 
-        document.addStopEvent("keydown", function(ev) {
-            var key = eventToKey(ev);
-            if (keyBindings[key]) {
-                if (!DialogManager.modalIsVisible() || keyBindingModalOK[key])
-                    keyBindings[key]();
-            }
-            else {
-                return true;
-            }
+    var keyBindingModalOK = {
+        "esc": 1
+    };
+
+    if (Browser.Platform.mac) {
+        keyBindings["meta a"] = keyBindings["ctrl a"];
+        keyBindings["meta e"] = keyBindings["ctrl e"];
+        keyBindings["meta o"] = keyBindings["ctrl o"];
+        keyBindings["meta p"] = keyBindings["ctrl p"];
+        keyBindings["meta u"] = keyBindings["ctrl u"];
+
+        delete keyBindings["ctrl a"];
+        delete keyBindings["ctrl e"];
+        delete keyBindings["ctrl o"];
+        delete keyBindings["ctrl p"];
+        delete keyBindings["ctrl u"];
+    }
+
+    document.addStopEvent("keydown", function(ev) {
+        var key = eventToKey(ev);
+        if (keyBindings[key]) {
+            if (!DialogManager.modalIsVisible() || keyBindingModalOK[key])
+                keyBindings[key]();
+        }
+        else {
+            return true;
+        }
+    });
+
+    if (Browser.opera) {
+        document.addEvent("keypress", function(ev) {
+            return !keyBindings[eventToKey(ev)];
         });
-
-        if (Browser.opera) {
-            document.addEvent("keypress", function(ev) {
-                return !keyBindings[eventToKey(ev)];
-            });
-        }
     }
 }
 
@@ -281,10 +275,8 @@ function resizeUI(hDiv, vDiv) {
         showSB = config.showStatusBar,
         showTB, tallCat;
 
-    if (!isGuest) {
-        showTB = config.showToolbar;
-        tallCat = !!utWebUI.settings["gui.tall_category_list"];
-    }
+    showTB = config.showToolbar;
+    tallCat = !!utWebUI.settings["gui.tall_category_list"];
 
     var eleTB = $("mainToolbar");
     var tbh = (showTB ? eleTB.getHeight() : 0);
@@ -617,12 +609,6 @@ function setupNonGuest() {
     //--------------------------------------------------
 
     __resizeUI_ready__ = true;
-
-    if (isGuest) {
-        resizeUI();
-        return;
-    }
-
 }
 function setupToolbar() {
     //--------------------------------------------------
@@ -1638,12 +1624,6 @@ function loadMiscStrings() {
     //--------------------------------------------------
 
     utWebUI.updateStatusBar();
-
-    //--------------------------------------------------
-    // NON-GUEST SETUP
-    //--------------------------------------------------
-
-    if (isGuest) return;
 
     //--------------------------------------------------
     // TOOLBAR
