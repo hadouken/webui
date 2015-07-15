@@ -2798,31 +2798,15 @@ var utWebUI = {
     },
 
     "showSettings": function() {
-        this.animateToggle(true);
-        //DialogManager.show("Settings");
+        DialogManager.show("Settings");
     },
     
     "hideSettings": function(load_settings) {
-        if(load_settings)
+        if(load_settings) {
             utWebUI.loadSettings();
+        }
             
-        this.animateToggle(false);
-    },
-    
-    "animateToggle": function(show) {
-        var _top = show ? '0%' : '-100%';
-        
-        if(show)
-            jQuery("#settingsHider").addClass('open');
-        
-        jQuery('#dlgSettings')
-            .addClass('moving')
-            .animate({ top: _top }, 350, 'linear', 
-                function(){
-                    jQuery(this).removeClass('moving');
-                    jQuery("#settingsHider").toggleClass('open', show);
-                }
-            );
+        DialogManager.hide("Settings");
     },
 
     "searchExecute": function() {
@@ -3557,33 +3541,9 @@ var utWebUI = {
         }
         this.propID = "";
 
-        if (str != "" || window.utweb !== undefined) {
-            if (window.getraptor) {
-                            // setting label
-                            var torrent = utweb.tables.torrent.view.selectedRows()[0];
-                            var newLabelInput = jQuery('#torrent_props_label');
-                            
-                            if (newLabelInput.length)
-                            {
-                                var newlabel = jQuery('#torrent_props_label').val();
-                                if (newlabel != torrent.label) {
-                                    console.log('label has changed!  -- set to empty label');
-                                    // first set the label to empty string...
-                                    str += '&s=label&v=';
-                                    var after_update = function() {
-                                        console.log('label has changed!  -- set to new primary label');
-                                        getraptor().post_raw( "action=setprops&s=label&v="+newlabel, { hash: torrent.hash }, function() {} );
-                                    }
-                                } else {
-                                    var after_update = function() {}
-                                }
-                            }
-                getraptor().post_raw( "action=setprops"+str, { hash: torrent.hash }, after_update );
-            } else {
-                this.request("action=setprops&hash=" + this.trtTable.selectedRows.join(str + "&hash=") + str);
-            }
+        if (str != "") {
+            this.request("action=setprops&hash=" + this.trtTable.selectedRows.join(str + "&hash=") + str);
         }
-
     },
 
     "showDetails": function(id) {
@@ -4791,9 +4751,6 @@ var utWebUI = {
         if (this.config) {
             this.config.activeSettingsPane = id;
         }
-
-        console.log("JQUERY");
-        //jQuery('#dlgSettings-title').text(document.getElementById('tab_title_' + id).innerHTML || L_("ST_CAPT_GENERAL"));
     },
 
     "fdFormatRow": function(values, index) {

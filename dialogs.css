@@ -446,63 +446,28 @@
  * DIALOG: Settings
  **************************************************/
 
+/**************************************************
+ * DIALOG: Settings
+ **************************************************/
+
 #dlgSettings {
-    width: 100%;
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 12px;
-}
-#dlgSettings.moving{
-    -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+    width: 650px;
 }
 
-#dlgSettings .dlg-body{
-    margin: 0;
-}
-
-/*#dlgSettings-head {
+#dlgSettings-head {
     background-image: url(./images/settings.png);
-}*/
-
-#dlgSettings-title{
-    font-weight: normal;
-    font-size: 24px;
-    padding: 5px 10px 5px;
-    margin: 0 0 5px 150px;
-    color: #333;
-    text-shadow: 0 1px 0 #fff;
-    border-bottom: 1px solid #ccc;
-    background: #ECECEC;
-}
-#dlgSettings-title{
-    padding-left: 0;
-    border-color: #ddd;
-    background: none;
-    text-shadow: none;
-    margin-left: 160px;
-    margin-right: 10px;
-}
-
-#dlgSettings .dlg-body,
-#dlgSettings-form{
-    height: 100%;
-    width: 100%;
 }
 
 #dlgSettings-menuCont {
-    background-color: #F4F6F9;
-    border-right: 1px solid #ccc;
+    background-color: #FFFFFF;
+    border-right: 1px solid #D0D0D0;
     bottom: 0;
     display: block !important;
     left: 0;
     overflow: auto;
     position: absolute;
     top: 0;
-    width: 149px;
-}
-#dlgSettings-menuCont h2{
-    font-weight: normal;
-    font-size: 22px;
-    padding: 10px 0 10px 10px;
+    width: 120px;
 }
 
 #dlgSettings-menuCont > div {
@@ -510,35 +475,19 @@
     min-width: 100%;
 }
 
-#dlgSettings-advOptList{
-    min-height: 400px;
-}
-
 #dlgSettings-menu {
     list-style: none;
     white-space: nowrap;
 }
 
-#dlgSettings-menu li a {
+#dlgSettings-menu li > a {
     display: block;
     padding: 2px 6px;
-    color: #333;
-    font-size: 12px;
-    border: 1px solid transparent;
-    text-indent: 10px;
-    border-left: 0;
-    border-right: 0;
 }
 
-#dlgSettings-menu li.selected a {
-    background-color: #BBCEE9;
-    border-color: #8FAAD9;
-    color: #000;
-/*  color: #FFFFFF;*/
-}
-
-#dlgSettings-menu li.hidden {
-    display: none!important;
+#dlgSettings-menu .selected > a {
+    background-color: #0099FF;
+    color: #FFFFFF;
 }
 
 #dlgSettings .dlg-body {
@@ -546,12 +495,12 @@
 }
 
 #dlgSettings .settings-pane {
-    left: 150px;
+    height: 350px;
+    left: 120px;
     overflow: auto;
-    padding: 5px 20px;
+    padding: 5px 10px;
     position: relative;
-    width: 560px;
-    background: #fff;
+    width: 510px;
 }
 
 /* General */
@@ -605,9 +554,9 @@ input[id="proxy.password"] { width: 70px; }
     width: 100%;
 }
 
-#sched_table * {
+#sched_table td {
     -webkit-user-select: ignore !important;
-    font-size: 0.95em;
+    font-size: 0.85em;
     font-weight: bold;
 }
 
@@ -656,16 +605,15 @@ input[id="proxy.password"] { width: 70px; }
 #dlgSettings-Scheduler .mode3:hover { background-color: #DFA8A8; }
 #dlgSettings-Scheduler .disabled .mode3 { background-color: #D0D0D0; }
 
-/* Web UI */
+/* Remote */
 
-#DLG_SETTINGS_9_WEBUI_03,
-#DLG_SETTINGS_9_WEBUI_05 {
+#DLG_SETTINGS_10_REMOTE_04,
+#DLG_SETTINGS_10_REMOTE_05 {
     float: left;
 }
 
-input[id="webui.username"],
-input[id="webui.password"],
-input[id="webui.guest"] {
+input[id="webui.uconnect_username"],
+input[id="webui.uconnect_password"] {
     float: right;
     margin-left: 3px;
     width: 135px;
@@ -679,6 +627,11 @@ input[id="webui.guest"] {
     margin-top: 3px;
     padding: 0.1em 0;
     position: relative;
+}
+
+#dlgSettings-advOptList {
+    width: 485px !important;
+    height: 275px !important;
 }
 
 #dlgSettings-advOptInput input {
@@ -718,7 +671,44 @@ input[id="gui.dlrate_menu"] {
 }
 
 #search_list {
-    height: 75px;
+    height: 5em;
+}
+
+/* Web UI */
+
+#DLG_SETTINGS_9_WEBUI_03,
+#DLG_SETTINGS_9_WEBUI_05 {
+    float: left;
+}
+
+input[id="webui.username"],
+input[id="webui.password"],
+input[id="webui.guest"] {
+    float: right;
+    margin-left: 3px;
+    width: 135px;
+}
+
+/* Cookie Manager */
+
+#dlgSettings-cookieInput .line-cont {
+    margin-top: 2px;
+}
+
+#dlgSettings-cookieInput input {
+    vertical-align: baseline;
+}
+
+#dlgSettings-cookieDomain-wrap,
+#dlgSettings-cookieData-wrap {
+    left: 6em;
+    position: absolute;
+    right: 10px;
+}
+
+#dlgSettings-cookieDomain,
+#dlgSettings-cookieData {
+    width: 100%;
 }
 
 /* Hide Unknown Settings */
@@ -726,125 +716,6 @@ input[id="gui.dlrate_menu"] {
 #dlgSettings .dlg-body div,
 #dlgSettings .dlg-body fieldset {
     display: none;
-}
-
-#dlgSettings fieldset{
-    position: relative;
-    background: #fff;
-    margin: 8px 0;
-    padding: 10px 15px 15px;
-    border: 0;
-    border-top: 1px solid #e2e2e2;
-    -webkit-border-radius:  0;
-    -moz-border-radius:     0;
-    -ms-border-radius:      0;
-    -o-border-radius:       0;
-    border-radius:          0;
-}
-
-#dlgSettings fieldset legend{
-    padding: 0 5px;
-    font-family: Helvetica, Arial, sans-serif;
-    font-weight: normal;
-    font-size: 18px;
-/*  float: left;*/
-}
-#dlgSettings input.btn{
-    cursor: pointer;
-    height: 21px;
-    width: auto;
-    min-width: 50px;
-    padding: 0 5px;
-    text-align: center;
-/*  color: #333;
-*/  text-shadow: 0 1px #fff;
-    -webkit-border-radius: 4px !important;
-    -moz-border-radius: 4px !important;
-    -ms-border-radius: 4px !important;
-    -o-border-radius: 4px !important;
-    border-radius: 4px !important;
-    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    -moz-box-shadow:    0 1px 3px rgba(0,0,0,0.1);
-    -ms-box-shadow:     0 1px 3px rgba(0,0,0,0.1);
-    -o-box-shadow:      0 1px 3px rgba(0,0,0,0.1);
-    box-shadow:         0 1px 3px rgba(0,0,0,0.1);
-}
-#dlgSettings input.btn.disabled:hover {
-    cursor: default;
-    border-color: #AAA;
-}
-
-#dlgSettings input.btn:hover{
-    border-color: #888;
-}
-#dlgSettings input.tbox{
-    text-indent: 4px;
-    height: 19px;
-}
-#dlgSettings textarea,
-#dlgSettings input.tbox{
-    -webkit-box-shadow: rgba(255,255,255,0.4) 0px 1px 0px, rgba(0,0,0,0.2) 0px 1px 2px inset;
-    -moz-box-shadow:    rgba(255,255,255,0.4) 0px 1px 0px, rgba(0,0,0,0.2) 0px 1px 2px inset;
-    -ms-box-shadow:     rgba(255,255,255,0.4) 0px 1px 0px, rgba(0,0,0,0.2) 0px 1px 2px inset;
-    -o-box-shadow:      rgba(255,255,255,0.4) 0px 1px 0px, rgba(0,0,0,0.2) 0px 1px 2px inset;
-    box-shadow:         rgba(255,255,255,0.4) 0px 1px 0px, rgba(0,0,0,0.2) 0px 1px 2px inset;
-}
-#dlgSettings textarea,
-#dlgSettings input.tbox,
-#dlgSettings input.btn{
-    border: 1px solid #aaa;
-    -webkit-border-radius:  2px;
-    -moz-border-radius:     2px;
-    -ms-border-radius:      2px;
-    -o-border-radius:       2px;
-    border-radius:          2px;
-}
-#dlgSettings input[type="checkbox"],
-#dlgSettings select{
-    top: 0;
-    position: relative;
-}
-#dlgSettings label{
-    
-}
-
-#dlgSettings .align-right{
-    text-align: right;
-    min-width: 110px;
-}
-
-#dlgSettings .line-cont{
-    height: 22px;
-    line-height: 19px;
-}
-#dlgSettings .indent{
-    
-}
-#dlgSettings .dlg-foot{
-    height: 22px;
-    padding: 0;
-    position: absolute;
-    background: none;
-    border: 0;
-    margin: 0;
-    top: 6px;
-    right: 10px;
-}
-#dlgSettings .dlg-foot .btn{
-    height: 25px;
-    padding: 0 10px;
-    font-weight: bold;
-}
-#DLG_SETTINGS_CLOSE{
-    opacity: 0.8;
-    height: 16px;
-    width: 16px;
-    float: right;
-    margin: 5px 5px 0 10px;
-    background: url(./images/panel_close.png);
-}
-#DLG_SETTINGS_CLOSE:hover{
-    opacity: 1;
 }
 
 #total_uploaded_history,
@@ -863,8 +734,8 @@ NOTE: The following is an ugly hack, but a necessary one if we want the settings
       to remain scalable.
 */
 
-#dlgSettings .dlg-body .stable,
-#dlgSettings .dlg-body .stable div {
+#dlgSettings .stable,
+#dlgSettings .stable div {
     display: block !important;
 }
 

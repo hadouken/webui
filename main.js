@@ -686,13 +686,13 @@ function setupDialogManager() {
 
     DialogManager.init();
 
-    ["About", "Add", "AddEditRSSFeed", "AddURL", "AddLabel", "Props", "RSSDownloader", "Delete"].each(function(k) {
+    ["About", "Add", "AddEditRSSFeed", "AddURL", "AddLabel", "Props", "RSSDownloader", "Settings", "Delete"].each(function(k) {
         var isModal = ["AddEditRSSFeed", "Props"].contains(k);
         DialogManager.add(k, isModal, {
               "Add": function() { utWebUI.getDirectoryList(); }
             , "AddURL": function() { utWebUI.getDirectoryList(); }
             , "RSSDownloader": function() { utWebUI.rssDownloaderShow(true); }
-            // , "Settings": function() { utWebUI.stpanes.onChange(); }
+            , "Settings": function() { utWebUI.stpanes.onChange(); }
         }[k]);
     });
 
@@ -1012,44 +1012,33 @@ function setupSettings() {
 
     // -- OK Button
 
-    // $("DLG_SETTINGS_03").addEvent("click", function() {
-    //  //DialogManager.hide("Settings");
-    //  utWebUI.hideSettings();
-    //  utWebUI.setSettings();
-    // });
-    
-    // -- Save Button
-    $("DLG_SETTINGS_SAVE").addEvent("click", function() {
+    $("DLG_SETTINGS_03").addEvent("click", function() {
+        DialogManager.hide("Settings");
         utWebUI.hideSettings();
         utWebUI.setSettings();
-    });
-    
-    $("DLG_SETTINGS_CLOSE").addEvent("click", function(e) {
-        e.preventDefault();
-        utWebUI.hideSettings();
     });
 
     // -- Cancel Button
 
-    // $("DLG_SETTINGS_04").addEvent("click", function(ev) {
-    //  utWebUI.hideSettings(true);
-    //  //$("dlgSettings").getElement(".dlg-close").fireEvent("click", ev);
-    //      // Fire the "Close" button's click handler to make sure
-    //      // controls are restored if necessary
-    // });
+    $("DLG_SETTINGS_04").addEvent("click", function(ev) {
+        utWebUI.hideSettings(true);
+        $("dlgSettings").getElement(".dlg-close").fireEvent("click", ev);
+        // Fire the "Close" button's click handler to make sure
+        // controls are restored if necessary
+    });
 
     // -- Apply Button
 
-    // $("DLG_SETTINGS_05").addEvent("click", function(ev) {
-    //  utWebUI.setSettings();
-    // });
+    $("DLG_SETTINGS_05").addEvent("click", function(ev) {
+        utWebUI.setSettings();
+    });
 
     // -- Close Button
 
-    /*$("dlgSettings").getElement(".dlg-close").addEvent("click", function(ev) {
+    $("dlgSettings").getElement(".dlg-close").addEvent("click", function(ev) {
         utWebUI.hideSettings(true);
         //utWebUI.loadSettings();
-    });*/
+    });
 
     // -- Form Submission
 
