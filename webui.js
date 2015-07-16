@@ -605,11 +605,8 @@ var utWebUI = {
 
         try {
             new Request.JSON({
-                "url": apiBase,
-                "headers": {
-                    "Authorization": "Token my-token"
-                },
-                "method": "post",
+                url: apiBase,
+                method: "post",
                 onError: function(j, h) {
                     try {
                         h.text = JSON.stringify(j)
