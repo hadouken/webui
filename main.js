@@ -457,7 +457,7 @@ function setupUserInterface() {
 
     var c = Browser.ie ? "click" : "change";
     utWebUI.updateToolbar();
-    ["add", "addurl", "remove", "start", "pause", "stop", "queueup", "queuedown", "rssdownloader", "setting"].each(function(h) {
+    ["add", "addurl", "remove", "start", "pause", "queueup", "queuedown", "rssdownloader", "setting"].each(function(h) {
         $(h).addStopEvent("click", function(j) {
             if (j.target.hasClass("disabled")) {
                 return
@@ -483,7 +483,7 @@ function setupUserInterface() {
                 case "queuedown":
                     i = j.shift;
                 default:
-                    utWebUI[h](i)
+                    utWebUI[h](i);
             }
         })
     });
@@ -1124,7 +1124,6 @@ function loadLangStrings(b) {
         remove: "OV_TB_REMOVE",
         start: "OV_TB_START",
         pause: "OV_TB_PAUSE",
-        stop: "OV_TB_STOP",
         queueup: "OV_TB_QUEUEUP",
         queuedown: "OV_TB_QUEUEDOWN",
         rssdownloader: "OV_TB_RSSDOWNLDR",

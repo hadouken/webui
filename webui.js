@@ -394,7 +394,7 @@ var utWebUI = {
     totalDL: 0,
     totalUL: 0,
     TOKEN: "",
-    delActions: ["remove", "removetorrent", "removedata", "removedatatorrent"],
+    delActions: ["remove", "removedata"],
     advSettings: {
         "bt.allow_same_ip": "",
         "bt.auto_dl_enable": "",
@@ -656,38 +656,48 @@ var utWebUI = {
     request: function(a, e, d, b) {
         console.log("request: " + a);
     },
-    perform: function(c) {
-        var b = false;
-        switch (c) {
+
+    perform: function(action) {
+        var all = false;
+
+        switch (action) {
             case "pauseall":
-                c = "pause";
-                b = true;
+                action = "pause";
+                all = true;
                 break;
+
             case "unpauseall":
-                c = "unpause";
-                b = true;
-                break
+                action = "unpause";
+                all = true;
+                break;
         }
-        var a = this.getHashes(c, b);
-        switch (c) {
+
+        var hashes = this.getHashes(action, all);
+
+        switch (action) {
             case "pause":
-                if (!b && a.length === 0) {
-                    c = "unpause";
-                    a = this.getHashes(c)
+                if (!all && hashes.length === 0) {
+                    action = "unpause";
+                    hashes = this.getHashes(action);
                 }
-                break
+
+                break;
         }
-        if (a.length == 0) {
-            return
+
+        if (hashes.length == 0) {
+            return;
         }
-        if (c.test(/^remove/) && a.contains(this.torrentID)) {
+
+        if (action.test(/^remove/) && hashes.contains(this.torrentID)) {
             this.torrentID = "";
-            this.clearDetails()
+            this.clearDetails();
         }
-        this.getList("action=" + c + "&hash=" + a.join("&hash="), (function() {
+
+        this.getList({"webui.perform": [action, hashes]}, (function() {
             this.updateToolbar()
         }).bind(this))
     },
+
     getHashes: function(j, l) {
         var o = [];
         var i = (l ? Object.keys(this.torrents) : this.trtTable.selectedRows);
@@ -739,9 +749,7 @@ var utWebUI = {
                     }
                     break;
                 case "remove":
-                case "removetorrent":
                 case "removedata":
-                case "removedatatorrent":
                     break;
                 default:
                     continue
@@ -1016,17 +1024,25 @@ var utWebUI = {
 
     getList: function(a, callback) {
         this.endPeriodicUpdate();
+
+        // We do a multicall always. and if a is not
+        // undefined, we add it also
         
-        a = a || "";
-        if (a != "") {
-            a += "&"
+        var params = {
+            "webui.list": []
+        };
+
+        if(a) {
+            Object.append(params, a);
         }
 
-        this.request2("webui.list", [], (function(data) {
-            this.loadList(data);
+        this.request2("core.multiCall", params, (function(data) {
+            var list = data["webui.list"];
+
+            this.loadList(list);
 
             if (callback) {
-                callback(data)
+                callback(list)
             }
         }).bind(this));
     },
@@ -1440,19 +1456,24 @@ var utWebUI = {
         }).bind(this)(b, this.torGroups[c[CONST.TORRENT_HASH]]);
         return b
     },
-    setLabel: function(f) {
-        var c = [];
+
+    setLabel: function(label) {
+        var hashes = [];
+
         for (var e = 0, b = this.trtTable.selectedRows.length; e < b; e++) {
             var d = this.trtTable.selectedRows[e];
-            if (this.torrents[d][CONST.TORRENT_LABEL] != f) {
-                c.push(d)
+
+            if (this.torrents[d][CONST.TORRENT_LABEL] != label) {
+                hashes.push(d)
             }
         }
-        if (c.length > 0) {
-            var a = "&v=" + encodeURIComponent(f) + "&s=label&hash=";
-            this.request("action=setprops&s=label&hash=" + c.join(a) + "&v=" + encodeURIComponent(f))
+
+        if (hashes.length > 0) {
+            var req = [ hashes, { label: label } ];
+            this.request2("webui.setProperties", req);
         }
     },
+
     newLabel: function() {
         var a = "";
         if (this.trtTable.selectedRows.length == 1) {
@@ -3098,8 +3119,6 @@ var utWebUI = {
             label: [CMENU_CHILD, L_("ML_LABEL"), f],
             remove: [L_("ML_REMOVE"), this.remove.bind(this, CONST.TOR_REMOVE)],
             removeand: [CMENU_CHILD, L_("ML_REMOVE_AND"), [
-                [L_("ML_DELETE_TORRENT"), this.remove.bind(this, CONST.TOR_REMOVE_TORRENT)],
-                [L_("ML_DELETE_DATATORRENT"), this.remove.bind(this, CONST.TOR_REMOVE_DATATORRENT)],
                 [L_("ML_DELETE_DATA"), this.remove.bind(this, CONST.TOR_REMOVE_DATA)]
             ]],
             recheck: [L_("ML_FORCE_RECHECK"), this.recheck.bind(this)],
