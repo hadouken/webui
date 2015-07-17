@@ -3567,13 +3567,15 @@ var utWebUI = {
             return b
         }
     },
-    flsSelect: function(a, b) {
-        if (a.isRightClick() && this.flsTable.selectedRows.length > 0) {
-            this.showFileMenu.delay(0, this, a)
+
+    flsSelect: function(ev, b) {
+        if (ev.isRightClick() && this.flsTable.selectedRows.length > 0) {
+            this.showFileMenu.delay(0, this, ev)
         }
     },
-    showFileMenu: function(k) {
-        if (!k.isRightClick()) {
+
+    showFileMenu: function(ev) {
+        if (!ev.isRightClick()) {
             return;
         }
 
@@ -3586,7 +3588,6 @@ var utWebUI = {
         var g = [
             [L_("MF_DONT"), this.setPriority.pass([b, CONST.FILEPRIORITY_SKIP], this)],
             [CMENU_SEP],
-            [L_("MF_LOW"), this.setPriority.pass([b, CONST.FILEPRIORITY_LOW], this)],
             [L_("MF_NORMAL"), this.setPriority.pass([b, CONST.FILEPRIORITY_NORMAL], this)],
             [L_("MF_HIGH"), this.setPriority.pass([b, CONST.FILEPRIORITY_HIGH], this)]
         ];
@@ -3628,7 +3629,7 @@ var utWebUI = {
         ]);
         ContextMenu.clear();
         ContextMenu.add.apply(ContextMenu, a);
-        ContextMenu.show(k.page)
+        ContextMenu.show(ev.page)
     },
     flsShowCopy: function() {
         this.showCopy(L_("MENU_COPY"), this.flsTable.copySelection())
@@ -3657,22 +3658,26 @@ var utWebUI = {
         }
         this.proxyFiles(this.torrents[c][CONST.TORRENT_STREAM_ID], a, false)
     },
+
     setPriority: function(c, b) {
         var a = this.getSelFileIds().filter(function(d) {
-            return (this.filelist[d][CONST.FILE_PRIORITY] != b)
+            return (this.filelist[d][CONST.FILE_PRIORITY] != b);
         }, this);
+
         if (a.length <= 0) {
-            return
+            return;
         }
-        this.request("action=setprio&hash=" + c + "&p=" + b + "&f=" + a.join("&f="), (function() {
+
+        this.request2("webui.setFilePriority", [ c, a, b ] ,(function() {
             $each(a, function(d) {
                 var e = c + "_" + d;
                 this.filelist[d][CONST.FILE_PRIORITY] = b;
                 this.flsTable.rowData[e].data[this.flsColPrioIdx] = b;
-                this.flsTable.updateCell(e, this.flsColPrioIdx)
+                this.flsTable.updateCell(e, this.flsColPrioIdx);
             }, this)
-        }).bind(this))
+        }).bind(this));
     },
+
     trtColReset: function() {
         var a = {
             colMask: 0,
