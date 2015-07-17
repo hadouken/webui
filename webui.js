@@ -607,6 +607,7 @@ var utWebUI = {
             new Request.JSON({
                 url: apiBase,
                 method: "post",
+                async: !(method === "webui.setSettings"),
                 onError: function(j, h) {
                     try {
                         h.text = JSON.stringify(j)
@@ -620,10 +621,10 @@ var utWebUI = {
                     self.endPeriodicUpdate();
                     fails[0]++;
 
-                    var h = Math.pow(c.limits.reqRetryDelayBase, b[0]);
+                    var h = Math.pow(self.limits.reqRetryDelayBase, fails[0]);
                     
-                    if (b[0] <= self.limits.reqRetryMaxAttempts) {
-                        log("Request failure #" + b[0] + " (will retry in " + h + " seconds): " + a)
+                    if (fails[0] <= self.limits.reqRetryMaxAttempts) {
+                        log("Request failure #" + fails[0] + " (will retry in " + h + " seconds): " + method);
                     } else {
                         window.removeEvents("unload");
                         Overlay.msg('<p>WebUI is having trouble connecting to &micro;Torrent.</p><p>Try <a href="#" onclick="window.location.reload(true);">reloading</a> the page.</p>');
@@ -4138,7 +4139,7 @@ var utWebUI = {
         })
     },
     saveConfig: function(a, b) {
-        this.request("action=setsetting&s=webui.cookie&v=" + JSON.encode(this.config), b || null, a || false)
+        this.request2("webui.setSettings", [{"webui.cookie": JSON.encode(this.config)}], b || null);
     },
     updateStatusBar: function() {
         var d, a, c, b;
