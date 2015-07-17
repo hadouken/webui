@@ -632,7 +632,7 @@ var utWebUI = {
                         log("Request failure #" + fails[0] + " (will retry in " + h + " seconds): " + method);
                     } else {
                         window.removeEvents("unload");
-                        Overlay.msg('<p>WebUI is having trouble connecting to &micro;Torrent.</p><p>Try <a href="#" onclick="window.location.reload(true);">reloading</a> the page.</p>');
+                        Overlay.msg('<p>WebUI is having trouble connecting to Hadouken.</p><p>Try <a href="#" onclick="window.location.reload(true);">reloading</a> the page.</p>');
                         return;
                     }
 
