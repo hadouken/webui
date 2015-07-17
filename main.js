@@ -580,9 +580,13 @@ function setupUserInterface() {
         this.disabled = true;
 
         var dir = $("dlgAdd-basePath").value || 0;
-        var sub = encodeURIComponent($("dlgAdd-subPath").get("value")); // TODO: Sanitize!
+        var sub = $("dlgAdd-subPath").get("value"); // TODO: Sanitize!
 
-        var params = {};
+        var params = {
+            savePath: dir,
+            subPath: sub
+        };
+
         var requests = [];
 
         function makeRequest(reqIndex) {

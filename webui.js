@@ -2101,28 +2101,33 @@ var utWebUI = {
             delete this.rssfilters.EDIT
         }
     },
+
     getDirectoryList: function(a) {
         var b = Date.now();
         if (a || !this.dirlist._TIME_ || (b - this.dirlist._TIME_) > (this.limits.minDirListCache * 1000)) {
-            this.request("action=list-dirs", (function(c) {
+            this.request2("webui.listDirectories", [], (function(c) {
                 this.dirlist.empty();
                 this.dirlist = c["download-dirs"];
                 this.dirlist._TIME_ = b;
-                this.loadDirectoryList()
+                this.loadDirectoryList();
             }).bind(this))
         } else {
-            this.loadDirectoryList()
+            this.loadDirectoryList();
         }
     },
+
     loadDirectoryList: function() {
-        var b = this.dirlist;
-        b[0].path = "Default download directory";
-        var a = b.map(function(c) {
-            return "[" + parseInt(c.available, 10).toFileSize(2, 2) + " free] " + c.path
+        var dirs = this.dirlist;
+        dirs[0].path = "Default download directory";
+
+        var a = dirs.map(function(dir) {
+            return "[" + parseInt(dir.available, 10).toFileSize(2) + " free] " + dir.path
         });
+
         _loadComboboxStrings("dlgAdd-basePath", a, $("dlgAdd-basePath").value);
         _loadComboboxStrings("dlgAddURL-basePath", a, $("dlgAddURL-basePath").value)
     },
+
     getTransferHistory: function(a) {
         var b = Date.now();
         if (a || !this.xferhist._TIME_ || (b - this.xferhist._TIME_) > (this.limits.minXferHistCache * 1000)) {
