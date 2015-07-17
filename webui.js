@@ -2527,9 +2527,11 @@ var utWebUI = {
             this.config.urlCookies = n;
             b = true
         }
+
+        var params = {};
         var h = "";
         if (b && Browser.opera) {
-            h = "&s=webui.cookie&v=" + JSON.encode(this.config)
+            params["webui.cookie"] = JSON.encode(this.config);
         }
         k = $("gui.speed_in_title").checked;
         if (!k && !!this.settings["gui.speed_in_title"] != k) {
@@ -2556,9 +2558,9 @@ var utWebUI = {
             var l = this.settings[m],
                 g;
             if (p.type == "checkbox") {
-                g = p.checked ? 1 : 0
+                g = p.checked;
             } else {
-                g = p.get("value")
+                g = p.get("value");
             }
             switch (m) {
                 case "seed_ratio":
@@ -2575,11 +2577,13 @@ var utWebUI = {
             }
             if (l != g) {
                 this.settings[m] = g;
+                /*
+                TODO
                 if (m == "multi_day_transfer_mode") {
                     h += "&s=multi_day_transfer_mode_ul&v=" + (g == 0 ? 1 : 0) + "&s=multi_day_transfer_mode_dl&v=" + (g == 1 ? 1 : 0) + "&s=multi_day_transfer_mode_uldl&v=" + (g == 2 ? 1 : 0);
                     continue
-                }
-                h += "&s=" + m + "&v=" + encodeURIComponent(g)
+                }*/
+                params[m] = g;
             }
         }
         for (var m in this.advSettings) {
@@ -2590,20 +2594,13 @@ var utWebUI = {
             var l = this.settings[m];
             if (l != g) {
                 this.settings[m] = g;
-                if (typeOf(g) == "boolean") {
-                    g = g ? 1 : 0
-                }
-                h += "&s=" + m + "&v=" + encodeURIComponent(g)
+                params[m] = g;
             }
         }
-        if (h != "") {
-            this.request("action=setsetting" + h, Function.from(), !a)
-        }
-        if (this.settings["webui.enable"] == 0) {
-            Overlay.msg("WebUI was disabled. Goodbye.");
-            return
-        }
-        var c = Number(window.location.port ? window.location.port : (window.location.protocol == "http:" ? 80 : 443));
+
+        this.request2("webui.setSettings", params, Function.from());
+
+        /*var c = Number(window.location.port ? window.location.port : (window.location.protocol == "http:" ? 80 : 443));
         var f = Number(((this.settings["webui.enable_listen"] === undefined || this.settings["webui.enable_listen"]) && this.settings["webui.port"]) || this.settings.bind_port);
         if (f && (c !== f)) {
             this.endPeriodicUpdate();
@@ -2612,7 +2609,7 @@ var utWebUI = {
             if (a) {
                 window.location.reload(true)
             }
-        }
+        }*/
         this.toggleSearchBar();
         resizeUI()
     },
