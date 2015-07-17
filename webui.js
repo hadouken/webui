@@ -548,17 +548,22 @@ var utWebUI = {
         this.fdColDefs.each(function(b, a) {
             this.fdColToggle(a, b.hidden, true)
         }, this);
-        this.getSettings((function() {
-            this.update.delay(0, this, (function() {
-                try {
-                    this.refreshSelectedTorGroups();
-                    resizeUI();
-                    Overlay.hide()
-                } catch (a) {
-                    Overlay.err(a)
-                }
+
+        this.request2("core.getSystemInfo", [], (function(d) {
+            document.title = g_winTitle + " v" + d.versions["hadouken"];
+
+            this.getSettings((function() {
+                this.update.delay(0, this, (function() {
+                    try {
+                        this.refreshSelectedTorGroups();
+                        resizeUI();
+                        Overlay.hide()
+                    } catch (a) {
+                        Overlay.err(a)
+                    }
+                }).bind(this))
             }).bind(this))
-        }).bind(this))
+        }).bind(this));
     },
     beginPeriodicUpdate: function(a) {
         this.endPeriodicUpdate();
@@ -2614,7 +2619,10 @@ var utWebUI = {
         resizeUI()
     },
     showAbout: function() {
-        DialogManager.show("About")
+        this.request2("core.getSystemInfo", [], function(d) {
+            $("dlgAbout-version").set("text", "v" + d.versions["hadouken"] + " (" + d.commitish + ")");
+            DialogManager.show("About");
+        });
     },
     showAddEditRSSFeed: function(a) {
         var e = this.rssfeeds[a] || [];
@@ -2774,7 +2782,7 @@ var utWebUI = {
             ]],
             [CMENU_CHILD, L_("MM_OPTIONS"), [
                 [L_("MM_OPTIONS_PREFERENCES"), this.showSettings.bind(this)],
-                [L_("OV_TB_RSSDOWNLDR"), this.showRSSDownloader.bind(this)],
+                /*[L_("OV_TB_RSSDOWNLDR"), this.showRSSDownloader.bind(this)],*/
                 [CMENU_SEP],
                 [L_("MM_OPTIONS_SHOW_TOOLBAR"), this.toggleToolbar.bind(this, undefined)],
                 [L_("MM_OPTIONS_SHOW_DETAIL"), this.toggleDetPanel.bind(this, undefined)],
@@ -2784,12 +2792,12 @@ var utWebUI = {
                 [L_("MM_OPTIONS_TAB_ICONS"), this.toggleDetPanelIcons.bind(this, undefined)]
             ]],
             [CMENU_CHILD, L_("MM_HELP"), [
-                [L_("MM_HELP_UT_WEBPAGE"), openURL.pass(["http://www.utorrent.com/", null])],
-                [L_("MM_HELP_UT_FORUMS"), openURL.pass(["http://forum.utorrent.com/", null])],
+                ["Hadouken Webpage", openURL.pass(["http://www.hdkn.net/", null])],
+                ["Hadouken Forums", openURL.pass(["http://forum.hdkn.net/", null])],
                 [CMENU_SEP],
-                [L_("MM_HELP_WEBUI_FEEDBACK"), openURL.pass(["http://forum.utorrent.com/viewtopic.php?id=58156", null])],
+                ["Report issues", openURL.pass(["https://github.com/hadouken/hadouken/issues/new", null])],
                 [CMENU_SEP],
-                [L_("MM_HELP_ABOUT_WEBUI"), this.showAbout.bind(this)]
+                ["About Hadouken WebUI", this.showAbout.bind(this)]
             ]],
             [CMENU_SEP],
             [CMENU_CHILD, L_("STM_TORRENTS"), [
@@ -2798,19 +2806,19 @@ var utWebUI = {
             ]]
         ];
         if (this.config.showToolbar) {
-            a[1][2][3].unshift(CMENU_CHECK)
+            a[1][2][2].unshift(CMENU_CHECK)
         }
         if (this.config.showDetails) {
-            a[1][2][4].unshift(CMENU_CHECK)
+            a[1][2][3].unshift(CMENU_CHECK)
         }
         if (this.config.showStatusBar) {
-            a[1][2][5].unshift(CMENU_CHECK)
+            a[1][2][4].unshift(CMENU_CHECK)
         }
         if (this.config.showCategories) {
-            a[1][2][6].unshift(CMENU_CHECK)
+            a[1][2][5].unshift(CMENU_CHECK)
         }
         if (this.config.showDetailsIcons) {
-            a[1][2][8].unshift(CMENU_CHECK)
+            a[1][2][7].unshift(CMENU_CHECK)
         }
         ContextMenu.clear();
         ContextMenu.add.apply(ContextMenu, a);
