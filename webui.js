@@ -1056,34 +1056,24 @@ var utWebUI = {
     getStatusInfo: function(state, done) {
         var res = ["", ""];
 
-        if (state & CONST.STATE_PAUSED) {
-            res = ["Status_Paused", (state & CONST.STATE_CHECKING) ? L_("OV_FL_CHECKED").replace(/%:\.1d%/, (done / 10).toFixedNR(1)) : L_("OV_FL_PAUSED")]
-        } else {
-            if (state & CONST.STATE_STARTED) {
-                res = (done == 1000) ? ["Status_Up", L_("OV_FL_SEEDING")] : ["Status_Down", L_("OV_FL_DOWNLOADING")];
-                if (!(state & CONST.STATE_QUEUED)) {
-                    res[1] = "[F] " + res[1]
-                }
-            } else {
-                if (state & CONST.STATE_CHECKING) {
-                    res = ["Status_Checking", L_("OV_FL_CHECKED").replace(/%:\.1d%/, (done / 10).toFixedNR(1))]
-                } else {
-                    if (state & CONST.STATE_ERROR) {
-                        res = ["Status_Error", L_("OV_FL_ERROR").replace(/%s/, "??")]
-                    } else {
-                        if (state & CONST.STATE_QUEUED) {
-                            res = (done == 1000) ? ["Status_Queued_Up", L_("OV_FL_QUEUED_SEED")] : ["Status_Queued_Down", L_("OV_FL_QUEUED")]
-                        } else {
-                            if (done == 1000) {
-                                res = ["Status_Completed", L_("OV_FL_FINISHED")]
-                            } else {
-                                res = ["Status_Incomplete", L_("OV_FL_STOPPED")]
-                            }
-                        }
-                    }
-                }
-            }
+        if(state & CONST.STATE_ERROR) {
+            res = ["Status_Error", L_("OV_FL_ERROR").replace(/%s/, "??")];
+        } else if(state & CONST.STATE_CHECKING) {
+            res = ["Status_Checking", L_("OV_FL_CHECKED").replace(/%:\.1d%/, (done / 10).toFixedNR(1))];
+        } else if(state & CONST.STATE_PAUSED) {
+            res = ["Status_Paused", L_("OV_FL_PAUSED")];
+        } else if(state & CONST.STATE_STARTED && done >= 1000) {
+            res = ["Status_Up", L_("OV_FL_SEEDING")];
+        } else if(state & CONST.STATE_STARTED && done < 1000) {
+            res = ["Status_Down", L_("OV_FL_DOWNLOADING")];
+        } else if(state & CONST.STATE_QUEUED && done >= 1000) {
+            res = ["Status_Queued_Up", L_("OV_FL_QUEUED_SEED")];
+        } else if(state & CONST.STATE_QUEUED && done < 1000) {
+            res = ["Status_Queued_Down", L_("OV_FL_QUEUED")];
+        } else if(done >= 1000) {
+            res = ["Status_Completed", L_("OV_FL_FINISHED")];
         }
+
         return res;
     },
 
@@ -3090,10 +3080,12 @@ var utWebUI = {
             }
         }
     },
+
     showTrtMenu: function(d, g) {
         if (!d.isRightClick()) {
-            return
+            return;
         }
+
         var b = [];
         var e = CONST.TORRENT_LABEL;
         var f = [
@@ -3120,7 +3112,6 @@ var utWebUI = {
             forcestart: [L_("ML_FORCE_START"), this.forcestart.bind(this)],
             start: [L_("ML_START"), this.start.bind(this)],
             pause: [L_("ML_PAUSE"), this.pause.bind(this)],
-            stop: [L_("ML_STOP"), this.stop.bind(this)],
             queueup: [L_("ML_QUEUEUP"), (function(h) {
                 this.queueup(h.shift)
             }).bind(this)],
@@ -4177,60 +4168,72 @@ var utWebUI = {
         }
     },
     getDisabledActions: function() {
-        var c = {
+        var actions = {
             forcestart: 1,
             pause: 1,
             queuedown: 1,
             queueup: 1,
             remove: 1,
-            start: 1,
-            stop: 1
+            start: 1
         };
-        var e = this.trtTable.selectedRows;
-        if (e.length > 0) {
+
+        var hashes = this.trtTable.selectedRows;
+
+        if (hashes.length > 0) {
             var b = 0,
                 d = Number.MAX_VALUE,
                 a = -Number.MAX_VALUE;
-            e.each(function(l) {
-                var j = this.torrents[l];
-                var f = j[CONST.TORRENT_QUEUE_POSITION],
-                    k = j[CONST.TORRENT_STATUS];
-                var g = !!(k & CONST.STATE_STARTED),
-                    i = !!(k & CONST.STATE_CHECKING),
-                    h = !!(k & CONST.STATE_PAUSED),
-                    m = !!(k & CONST.STATE_QUEUED);
-                if (f > 0) {
+
+            hashes.each(function(hash) {
+                var torrent = this.torrents[hash];
+
+                var queue = torrent[CONST.TORRENT_QUEUE_POSITION],
+                    state = torrent[CONST.TORRENT_STATUS];
+
+                var started  = !!(state & CONST.STATE_STARTED),
+                    checking = !!(state & CONST.STATE_CHECKING),
+                    paused   = !!(state & CONST.STATE_PAUSED),
+                    queued   = !!(state & CONST.STATE_QUEUED);
+
+                if (queue > 0) {
                     ++b;
-                    if (f < d) {
-                        d = f
+
+                    if (queue < d) {
+                        d = queue;
                     }
-                    if (a < f) {
-                        a = f
+
+                    if (a < queue) {
+                        a = queue;
                     }
                 }
-                if ((!g || m || h) && !i) {
-                    c.forcestart = 0
+
+                if ((!started || queued || paused) && !checking) {
+                    actions.forcestart = 0
                 }
-                if (!(m || i) || h) {
-                    c.start = 0
+
+                if ((paused) && !checking) {
+                    actions.start = 0
                 }
-                if (!h && (i || g || m)) {
-                    c.pause = 0
-                }
-                if (i || g || m) {
-                    c.stop = 0
+
+                if ((started) && !checking) {
+                    actions.pause = 0
                 }
             }, this);
+
             if (b < a) {
-                c.queueup = 0
+                actions.queueup = 0
             }
+
             if (d <= this.torQueueMax - b) {
-                c.queuedown = 0
+                actions.queuedown = 0
             }
-            c.remove = 0
+            
+            actions.remove = 0
         }
-        return c
+
+        return actions;
     },
+
     updateToolbar: function() {
         var a = this.getDisabledActions();
         Object.each(a, function(c, b) {
