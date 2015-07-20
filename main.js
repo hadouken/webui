@@ -630,30 +630,39 @@ function setupUserInterface() {
     });
     
     $("ADD_URL_OK").addEvent("click", function() {
-        if ($("dlgAddURL-url").get("value").trim().length > 0) {
-            DialogManager.hide("AddURL");
-            var h = {
-                url: $("dlgAddURL-url").get("value"),
-                cookie: $("dlgAddURL-cookie").get("value"),
-                dir: $("dlgAddURL-basePath").value,
-                sub: $("dlgAddURL-subPath").get("value")
-            };
-            utWebUI.addURL(h, function() {
-                $("dlgAddURL-url").set("value", "");
-                $("dlgAddURL-cookie").set("value", "")
-            })
+        var url = $("dlgAddURL-url").get("value").trim();
+
+        if(url.length <= 0) {
+            return;
         }
+
+        // Disable button before we send stuff.
+        var that = this;
+        this.disabled = true;
+
+        var dir = $("dlgAddURL-basePath").value || 0;
+        var sub = $("dlgAddURL-subPath").get("value"); // TODO: Sanitize!
+
+        var params = {
+            savePath: dir,
+            subPath: sub
+        };
+
+        utWebUI.request2("webui.addTorrent", [ "url", url, params ],
+            function() {
+                $("dlgAddURL-url").set("value", "");
+
+                that.disabled = false;
+                DialogManager.hide("AddURL");
+            });
     });
+
     $("ADD_URL_CANCEL").addEvent("click", function(h) {
         DialogManager.hide("AddURL")
     });
-    $("dlgAddURL-cookieDetect").addEvent("click", function(i) {
-        var h = utWebUI.retrieveURLCookie($("dlgAddURL-url").get("value").trim());
-        if (h) {
-            $("dlgAddURL-cookie").set("value", h)
-        }
-    });
+
     $("dlgAddURL-form").addEvent("submit", Function.from(false));
+
     $("DLG_TORRENTPROP_01").addEvent("click", function() {
         DialogManager.hide("Props");
         utWebUI.setProperties()
