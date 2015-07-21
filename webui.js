@@ -552,14 +552,23 @@ var utWebUI = {
         this.request2("core.getSystemInfo", [], (function(d) {
             document.title = g_winTitle + " v" + d.versions["hadouken"];
 
+            $("hdkn-version").set("text", d.versions["hadouken"]);
+            $("hdkn-branch").set("text", d.branch);
+            $("lt-version").set("text", d.versions["libtorrent"]);
+
             this.getSettings((function() {
                 this.update.delay(0, this, (function() {
                     try {
                         this.refreshSelectedTorGroups();
                         resizeUI();
-                        Overlay.hide()
+                        Overlay.hide();
+
+                        if(window.location.hash === "#welcome") {
+                            window.location.hash = "";
+                            this.showWelcome(d);
+                        }
                     } catch (a) {
-                        Overlay.err(a)
+                        Overlay.err(a);
                     }
                 }).bind(this))
             }).bind(this))
@@ -2638,6 +2647,10 @@ var utWebUI = {
         DialogManager.show("AddEditRSSFeed");
         $("aerssfd-url").select();
         $("aerssfd-url").focus()
+    },
+    showWelcome: function(d) {
+        $("dlgWelcome-version").set("text", "v" + d.versions["hadouken"] + " (" + d.commitish + ")");
+        DialogManager.show("Welcome");
     },
     showAddTorrent: function() {
         DialogManager.show("Add")

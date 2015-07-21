@@ -515,8 +515,8 @@ function setupUserInterface() {
         click: null
     });
     DialogManager.init();
-    ["About", "Add", "AddEditRSSFeed", "AddURL", "Props", "ResetUI", "RSSDownloader", "Settings"].each(function(h) {
-        var i = ["AddEditRSSFeed", "Props", "ResetUI"].contains(h);
+    ["About", "Welcome", "Add", "AddEditRSSFeed", "AddURL", "Props", "ResetUI", "RSSDownloader", "Settings"].each(function(h) {
+        var i = ["AddEditRSSFeed", "Props", "ResetUI", "Welcome"].contains(h);
         DialogManager.add(h, i, {
             Add: function() {
                 utWebUI.getDirectoryList()

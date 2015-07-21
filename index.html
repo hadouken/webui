@@ -34,7 +34,7 @@ found in the LICENSE file.
             <a href="#" class="dlg-close"></a>
             <div id="dlgAbout-head" class="dlg-head">About</div>
             <div class="dlg-body">
-                <img id="dlgAbout-logo" src="./images/hdkn.png" alt="uTorrent" />
+                <img id="dlgAbout-logo" src="./images/hdkn.png" alt="Hadouken" />
                 <span id="dlgAbout-name">Hadouken WebUI</span>
                 <br />
                 <span id="dlgAbout-version"></span>
@@ -46,9 +46,15 @@ found in the LICENSE file.
                     </div>
                     <div>
                         <strong>Contributors:</strong>
-                        <div>Carsten Niebuhr (Directrix), Ultima, Firon, icleolion, 
-                            <a href="http://www.ignorantcow.net/" target="_blank">Ignorantcow</a>, Novik, 
-                            <a href="http://outfitfox.blogspot.com/" target="_blank">savaden</a>, shawnz
+                        <div>
+                            Carsten Niebuhr (Directrix),
+                            Ultima,
+                            Firon,
+                            icleolion,
+                            <a href="http://www.ignorantcow.net/" target="_blank">Ignorantcow</a>,
+                            Novik,
+                            <a href="http://outfitfox.blogspot.com/" target="_blank">savaden</a>,
+                            shawnz
                         </div>
                     </div>
                     <div>
@@ -69,6 +75,23 @@ found in the LICENSE file.
             </div>
         </div>
         <!-- About Dialog */ -->
+        <!-- /* Welcome Dialog -->
+        <div id="dlgWelcome" class="dlg-window">
+            <a href="#" class="dlg-close"></a>
+            <div id="dlgWelcome-head" class="dlg-head">Welcome</div>
+            <div class="dlg-body">
+                <img id="dlgWelcome-logo" src="./images/hdkn.png" alt="Hadouken" />
+                <span id="dlgWelcome-name">Hadouken</span>
+                <br />
+                <span id="dlgWelcome-version"></span>
+
+                <p>Welcome to Hadouken. This is the embedded web interface from which
+                you manage your Hadouken instance. It is pretty self-explanatory.</p>
+
+                <p>Happy torrenting!</p>
+            </div>
+        </div>
+        <!-- Welcome Dialog */ -->
         <!-- /* Reset UI Dialog -->
         <div id="dlgResetUI" class="dlg-window">
             <!-- TODO: Localize -->
@@ -1344,6 +1367,8 @@ found in the LICENSE file.
         <!-- /* Status Bar -->
         <div id="mainStatusBar">
             <div id="mainStatusBar-menu"></div>
+            <div class="section">libtorrent <span id="lt-version"></span></div>
+            <div class="section"><span id="hdkn-version"></span> (<span id="hdkn-branch"></span>)</div>
             <div id="mainStatusBar-upload" class="section"></div>
             <div id="mainStatusBar-download" class="section"></div>
         </div>
