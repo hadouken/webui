@@ -860,7 +860,7 @@ var utWebUI = {
         this.perform(!!a ? "queuebottom" : "queuedown")
     },
     removeDefault: function(a) {
-        this.remove((this.settings["gui.default_del_action"] || 0) | (a ? 2 : 0))
+        this.remove((this.settings["gui.default_del_action"] || 0) | (a ? 1 : 0))
     },
     remove: function(d) {
         if (DialogManager.modalIsVisible()) {
@@ -874,9 +874,7 @@ var utWebUI = {
         if (isNaN(d) || d < 0 || this.delActions.length <= d) {
             d = this.settings["gui.default_del_action"] || 0
         }
-        
-        d &= ~1;
-        
+
         var a = this.perform.bind(this, this.delActions[d]);
         if ([this.settings.confirm_when_deleting, true].pick()) {
             var c;
@@ -2986,7 +2984,7 @@ var utWebUI = {
                 case "url":
                     break;
                 case "availability":
-                    c[e] = (c[e] / 65536).toFixedNR(3);
+                    c[e] = (c[e]).toFixedNR(3);
                     break;
                 case "done":
                     c[e] = (c[e] / 10).toFixedNR(1) + "%";
