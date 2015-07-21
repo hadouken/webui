@@ -625,6 +625,8 @@ function setupUserInterface() {
                 reader.readAsDataURL(file);
             })(files[i]);
         }
+
+        return false;
     });
     
     $("ADD_FILE_CANCEL").addEvent("click", function(h) {
@@ -659,6 +661,8 @@ function setupUserInterface() {
                 that.disabled = false;
                 DialogManager.hide("AddURL");
             });
+
+        return false;
     });
 
     $("ADD_URL_CANCEL").addEvent("click", function(h) {
