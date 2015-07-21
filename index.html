@@ -115,7 +115,7 @@ found in the LICENSE file.
                     </div>
                     <fieldset>
                         <!-- TODO: Localize -->
-                        <legend>Options</legend>
+                        <legend>Paths</legend>
                         <div class="line-cont">
                             <select id="dlgAdd-basePath" class="tbox flr">
                                 <option value="0">Default download directory</option>
@@ -125,6 +125,21 @@ found in the LICENSE file.
                         <div class="line-cont">
                             <input type="text" id="dlgAdd-subPath" class="tbox flr" />
                             <label for="dlgAdd-subPath">Sub-path:</label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Options</legend>
+                        <div class="line-cont">
+                            <div class="fll">
+                                <input type="checkbox" id="dlgAdd-paused" />
+                                <label for="dlgAdd-paused">Paused</label>
+                            </div>
+
+                            <div class="half flr">
+                                <input type="checkbox" id="dlgAdd-sequential" />
+                                <label for="dlgAdd-sequential">Sequential download</label>
+                            </div>
                         </div>
                     </fieldset>
                 </div>
@@ -147,7 +162,7 @@ found in the LICENSE file.
                     </div>
                     <fieldset>
                         <!-- TODO: Localize -->
-                        <legend>Options</legend>
+                        <legend>Paths</legend>
                         <div class="line-cont">
                             <select id="dlgAddURL-basePath" class="tbox flr">
                                 <option value="0">Default download directory</option>
@@ -157,6 +172,20 @@ found in the LICENSE file.
                         <div class="line-cont">
                             <input type="text" id="dlgAddURL-subPath" class="tbox flr" />
                             <label for="dlgAddURL-subPath">Sub-path:</label>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Options</legend>
+                        <div class="line-cont">
+                            <div class="fll">
+                                <input type="checkbox" id="dlgAddURL-paused" />
+                                <label for="dlgAddURL-paused">Paused</label>
+                            </div>
+
+                            <div class="half flr">
+                                <input type="checkbox" id="dlgAdd-sequential" />
+                                <label for="dlgAddURL-sequential">Sequential download</label>
+                            </div>
                         </div>
                     </fieldset>
                 </div>

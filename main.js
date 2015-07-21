@@ -584,7 +584,9 @@ function setupUserInterface() {
 
         var params = {
             savePath: dir,
-            subPath: sub
+            subPath: sub,
+            paused: $("dlgAdd-paused").checked,
+            sequentialDownload: $("dlgAdd-sequential").checked
         };
 
         var requests = [];
@@ -645,7 +647,9 @@ function setupUserInterface() {
 
         var params = {
             savePath: dir,
-            subPath: sub
+            subPath: sub,
+            paused: $("dlgAddURL-paused").checked,
+            sequentialDownload: $("dlgAddURL-sequential").checked
         };
 
         utWebUI.request2("webui.addTorrent", [ "url", url, params ],
