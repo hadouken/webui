@@ -176,7 +176,7 @@ found in the LICENSE file.
                     <fieldset>
                         <legend id="DLG_TORRENTPROP_1_GEN_01"></legend>
                         <div class="textarea_wrap">
-                            <textarea id="prop-trackers" rows="" cols="" wrap="off" class="wide"></textarea>
+                            <textarea id="prop-trackers" rows="" cols="" wrap="off" class="wide" readonly="readonly"></textarea>
                         </div>
                     </fieldset>
                     <fieldset>
@@ -194,7 +194,7 @@ found in the LICENSE file.
                             <label for="prop-ulslots" id="DLG_TORRENTPROP_1_GEN_08"></label>
                         </div>
                     </fieldset>
-                    <fieldset>
+                    <!--<fieldset>
                         <legend id="DLG_TORRENTPROP_1_GEN_10"></legend>
                         <div class="line-cont">
                             <input type="checkbox" id="prop-seed_override" />
@@ -208,7 +208,7 @@ found in the LICENSE file.
                             <input type="text" id="prop-seed_time" class="tbox num flr" />
                             <label for="prop-seed_time" id="DLG_TORRENTPROP_1_GEN_14"></label>
                         </div>
-                    </fieldset>
+                    </fieldset>-->
                     <fieldset>
                         <legend id="DLG_TORRENTPROP_1_GEN_16"></legend>
                         <div class="line-cont">
@@ -217,6 +217,8 @@ found in the LICENSE file.
                                 <label for="prop-superseed" id="DLG_TORRENTPROP_1_GEN_17"></label>
                             </div>
                             <div class="half flr">
+                                <input type="checkbox" id="prop-auto_managed" />
+                                <label for="prop-auto_managed">Auto Managed</label>
                             </div>
                         </div>
                     </fieldset>

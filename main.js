@@ -904,12 +904,12 @@ function setupUserInterface() {
     $("cache.read").addEvent(c, function() {
         _link(this, 0, ["cache.read_turnoff", "cache.read_prune", "cache.read_thrash"])
     });
+
+    /* TODO
     $("prop-seed_override").addEvent(c, function() {
         _link(this, 0, ["prop-seed_ratio", "prop-seed_time"])
-    });
-    $("webui.uconnect_enable").addEvent(c, function() {
-        _link(this, 0, ["webui.uconnect_username", "webui.uconnect_password"])
-    });
+    });*/
+
     $("webui.enable").addEvent(c, function() {
         _link(this, 0, ["webui.username", "webui.password", "webui.enable_guest", "webui.enable_listen", "webui.restrict"]);
         _link(this, 0, ["webui.guest"], null, (this.checked && !$("webui.enable_guest").checked));

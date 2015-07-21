@@ -2353,7 +2353,8 @@ var utWebUI = {
             seed_override: 0,
             seed_ratio: 0,
             seed_time: 0,
-            ulslots: 0
+            ulslots: 0,
+            auto_managed: 0
         };
         this.advOptTable.clearSelection();
         this.advOptSelect();
@@ -2984,7 +2985,7 @@ var utWebUI = {
                 case "url":
                     break;
                 case "availability":
-                    c[e] = (c[e]).toFixedNR(3);
+                    c[e] = c[e] < 0 ? "" : (c[e]).toFixedNR(3);
                     break;
                 case "done":
                     c[e] = (c[e] / 10).toFixedNR(1) + "%";
@@ -3195,6 +3196,7 @@ var utWebUI = {
         $("prop-seed_ratio").value = "";
         $("prop-seed_time").value = "";
         $("prop-superseed").checked = "";
+        $("prop-auto_managed").checked = "";
         var b = $("prop-seed_override");
         b.checked = false;
         b.disabled = true;
@@ -3224,13 +3226,15 @@ var utWebUI = {
         $("prop-ulrate").value = (d.ulrate / 1024).toInt();
         $("prop-dlrate").value = (d.dlrate / 1024).toInt();
         $("prop-ulslots").value = d.ulslots;
+        /* TODO
         var e = $("prop-seed_override");
         e.disabled = false;
         e.checked = !!d.seed_override;
         e.fireEvent(Browser.ie ? "click" : "change");
         $("prop-seed_ratio").value = d.seed_ratio / 10;
-        $("prop-seed_time").value = d.seed_time / 60;
+        $("prop-seed_time").value = d.seed_time / 60;*/
         $("prop-superseed").checked = d.superseed;
+        $("prop-auto_managed").checked = d.auto_managed;
         var c = {
             superseed: 17
         };
@@ -3247,65 +3251,84 @@ var utWebUI = {
         $("dlgProps-head").set("text", this.torrents[this.propID][CONST.TORRENT_NAME] + " - " + L_("DLG_TORRENTPROP_00"));
         DialogManager.show("Props")
     },
+
     setProperties: function() {
-        var g = ("multi" === this.propID);
-        var d = this.props[this.propID];
-        var f = "";
-        for (var c in d) {
-            var e = $("prop-" + c);
-            if (!e) {
-                continue
+        var isMulti = ("multi" === this.propID);
+        var props = this.props[this.propID];
+        var params = {};
+
+        for (var key in props) {
+            var ele = $("prop-" + key);
+
+            if (!ele) {
+                continue;
             }
-            var b = d[c],
-                a;
-            if (!g && (b == -1) && ((c == "dht") || (c == "pex"))) {
-                continue
+
+            var value = props[key],
+                newValue;
+
+            if (!isMulti && (value == -1) && ((key == "dht") || (key == "pex"))) {
+                continue;
             }
-            if (e.type == "checkbox") {
-                if (g && e.disabled) {
-                    continue
+
+            if (ele.type == "checkbox") {
+                if (isMulti && ele.disabled) {
+                    continue;
                 }
-                a = e.checked ? 1 : 0
+
+                newValue = ele.checked ? 1 : 0
             } else {
-                a = e.get("value");
-                if (g && (a == "")) {
-                    continue
+                newValue = ele.get("value");
+
+                if (isMulti && (newValue == "")) {
+                    continue;
                 }
             }
-            switch (c) {
+
+            switch (key) {
                 case "seed_ratio":
-                    a *= 10;
+                    newValue *= 10;
                     break;
+
                 case "seed_time":
-                    a *= 60;
+                    newValue *= 60;
                     break;
+
                 case "dlrate":
                 case "ulrate":
-                    a *= 1024;
+                    newValue *= 1024;
                     break;
+
                 case "trackers":
-                    a = a.split("\n").map(function(h) {
+                    newValue = newValue.split("\n")
+                                       .map(function(h) {
                         return h.replace(/[\r\n]+/g, "")
                     }).join("\r\n");
-                    break
+                    break;
             }
-            if (g || b != a) {
-                f += "&s=" + c + "&v=" + encodeURIComponent(a);
-                if (!g) {
-                    d[c] = a
+
+            if (isMulti || value != newValue) {
+                params[key] = newValue;
+
+                if (!isMulti) {
+                    props[key] = newValue
                 }
             }
         }
-        if (g) {
+
+        if (isMulti) {
             [11, 17, 18, 19].each(function(h) {
                 $("DLG_TORRENTPROP_1_GEN_" + h).removeEvents("click")
             })
         }
+
         this.propID = "";
-        if (f != "") {
-            this.request("action=setprops&hash=" + this.trtTable.selectedRows.join(f + "&hash=") + f)
+
+        if (Object.keys(params).length > 0) {
+            this.request2("webui.setProperties", [ this.trtTable.selectedRows, params ]);
         }
     },
+
     showDetails: function(b) {
         var a = (b !== undefined);
         if (a) {
