@@ -2354,7 +2354,8 @@ var utWebUI = {
             seed_ratio: 0,
             seed_time: 0,
             ulslots: 0,
-            auto_managed: 0
+            auto_managed: 0,
+            save_path: 0
         };
         this.advOptTable.clearSelection();
         this.advOptSelect();
@@ -3197,6 +3198,7 @@ var utWebUI = {
         $("prop-seed_time").value = "";
         $("prop-superseed").checked = "";
         $("prop-auto_managed").checked = "";
+        $("prop-save_path").value = "";
         var b = $("prop-seed_override");
         b.checked = false;
         b.disabled = true;
@@ -3235,6 +3237,7 @@ var utWebUI = {
         $("prop-seed_time").value = d.seed_time / 60;*/
         $("prop-superseed").checked = d.superseed;
         $("prop-auto_managed").checked = d.auto_managed;
+        $("prop-save_path").value = d.save_path;
         var c = {
             superseed: 17
         };
@@ -3645,7 +3648,7 @@ var utWebUI = {
         }
         var h = this.filelist[n[0]];
         if (n.length > 1 || h[CONST.FILE_DOWNLOADED] != h[CONST.FILE_SIZE]) {}
-        a = a.concat(m);
+        // TODO (Get File) a = a.concat(m);
         a = a.concat([
             [CMENU_SEP],
             [L_("MENU_COPY"), this.flsShowCopy.bind(this)]
