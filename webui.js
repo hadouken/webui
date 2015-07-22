@@ -2241,6 +2241,10 @@ var utWebUI = {
                     break
             }
             switch (n) {
+                case "download_directories":
+                    c = c.join("\r\n");
+                    break;
+
                 case "multi_day_transfer_mode_ul":
                     if (c) {
                         k = 0
@@ -2555,6 +2559,9 @@ var utWebUI = {
                 g = p.get("value");
             }
             switch (m) {
+                case "download_directories":
+                    g = g.split("\n");
+                    break;
                 case "seed_ratio":
                     g *= 10;
                     break;

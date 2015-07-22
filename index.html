@@ -566,19 +566,9 @@ found in the LICENSE file.
                     </div>
                     <div id="dlgSettings-Directories" class="settings-pane">
                         <fieldset>
-                            <legend id="DLG_SETTINGS_3_PATHS_01"></legend>
+                            <legend>Default download location</legend>
                             <div class="line-cont">
-                                <div class="fll">
-                                    <input type="checkbox" id="dir_active_download_flag" />
-                                    <label for="dir_active_download_flag" id="DLG_SETTINGS_3_PATHS_02"></label>
-                                </div>
-                                <div class="half flr">
-                                    <input type="checkbox" id="always_show_add_dialog" />
-                                    <label for="always_show_add_dialog" id="DLG_SETTINGS_3_PATHS_03"></label>
-                                </div>
-                            </div>
-                            <div class="line-cont indent">
-                                <input type="text" id="dir_active_download" class="tbox wide" />
+                                <input type="text" id="save_path" class="tbox wide" />
                             </div>
                             <div class="line-cont">
                                 <div class="fll">
@@ -596,6 +586,12 @@ found in the LICENSE file.
                             <div class="line-cont indent">
                                 <input type="checkbox" id="move_if_defdir" />
                                 <label for="move_if_defdir" id="DLG_SETTINGS_3_PATHS_10"></label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Additional download directories (one per line)</legend>
+                            <div class="textarea_wrap">
+                                <textarea id="download_directories" rows="6" cols="" wrap="off" class="wide"></textarea>
                             </div>
                         </fieldset>
                         <fieldset>

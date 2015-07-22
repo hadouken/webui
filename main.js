@@ -943,9 +943,6 @@ function setupUserInterface() {
             $(h).addClass("disabled")
         })
     });
-    $("dir_active_download_flag").addEvent(c, function() {
-        _link(this, 0, ["always_show_add_dialog", "dir_active_download"])
-    });
     $("dir_completed_download_flag").addEvent(c, function() {
         _link(this, 0, ["dir_add_label", "dir_completed_download", "move_if_defdir"])
     });
