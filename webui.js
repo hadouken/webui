@@ -396,6 +396,7 @@ var utWebUI = {
     TOKEN: "",
     delActions: ["remove", "removedata"],
     advSettings: {
+        "bt.anonymous_mode": "",
         "bt.allow_same_ip": "",
         "bt.auto_dl_enable": "",
         "bt.auto_dl_factor": "",
@@ -407,7 +408,6 @@ var utWebUI = {
         "bt.ban_threshold": "",
         "bt.compact_allocation": "",
         "bt.connect_speed": "",
-        "bt.determine_encoded_rate_for_streamables": "",
         "bt.enable_pulse": "",
         "bt.enable_tracker": "",
         "bt.failover_peer_speed_threshold": "",
@@ -430,11 +430,6 @@ var utWebUI = {
         "bt.transp_disposition": "",
         "bt.use_ban_ratio": "",
         "bt.use_rangeblock": "",
-        "btapps.app_store": "",
-        "btapps.auto_update_btapps": "",
-        "btapps.auto_update_btinstalls": "",
-        "btapps.enable_activex": "",
-        "btapps.install_unsigned_apps": "",
         "dht.rate": "",
         "diskio.coalesce_write_size": "",
         "diskio.coalesce_writes": "",
@@ -515,14 +510,7 @@ var utWebUI = {
         remote_torrent_files_with_private_data: "",
         "rss.feed_as_default_label": "",
         "rss.smart_repack_filter": "",
-        "rss.update_interval": "",
-        "streaming.failover_rate_factor": "",
-        "streaming.failover_set_percentage": "",
-        "streaming.min_buffer_piece": "",
-        "streaming.safety_factor": "",
-        "sys.enable_wine_hacks": "",
-        "webui.allow_pairing": "",
-        "webui.token_auth": ""
+        "rss.update_interval": ""
     },
     init: function() {
         this.config = Object.merge({}, this.defConfig);
