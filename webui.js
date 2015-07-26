@@ -484,6 +484,7 @@ var utWebUI = {
         "net.disable_ipv6": "",
         "net.disable_incoming_ipv6": "",
         "net.discoverable": "",
+        "net.enable_utp": "",
         "net.limit_excludeslocal": "",
         "net.low_cpu": "",
         "net.max_halfopen": "",
