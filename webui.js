@@ -2243,7 +2243,7 @@ var utWebUI = {
             }
             switch (n) {
                 case "download_directories":
-                    c = c.join("\r\n");
+                    c = c.join('\n');
                     break;
 
                 case "multi_day_transfer_mode_ul":
@@ -2561,7 +2561,7 @@ var utWebUI = {
             }
             switch (m) {
                 case "download_directories":
-                    g = g.split("\n");
+                    g = g.split(/\r?\n/);
                     break;
                 case "seed_ratio":
                     g *= 10;
