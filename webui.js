@@ -2245,10 +2245,10 @@ var utWebUI = {
                 case "download_directories":
                     c = c.join('\n');
                     break;
-				case "max_dl_rate":
-				case "max_ul_rate":
-					c /= 1024;
-					break;
+                case "max_dl_rate":
+                case "max_ul_rate":
+                        c /= 1024;
+                        break;
                 case "multi_day_transfer_mode_ul":
                     if (c) {
                         k = 0
@@ -2572,10 +2572,10 @@ var utWebUI = {
                 case "seed_time":
                     g *= 60;
                     break;
-				case "max_dl_rate":
-				case "max_ul_rate":
-					g *= 1024;
-					break;
+                case "max_dl_rate":
+                case "max_ul_rate":
+                    g *= 1024;
+                    break;
                 case "search_list":
                     g = g.split("\n").map(function(i) {
                         return i.replace(/[\r\n]+/g, "")
@@ -2604,7 +2604,7 @@ var utWebUI = {
                 params[m] = g;
             }
         }
-		
+
         this.request2("webui.setSettings", params, Function.from());
 
         /*var c = Number(window.location.port ? window.location.port : (window.location.protocol == "http:" ? 80 : 443));
