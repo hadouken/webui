@@ -2245,7 +2245,10 @@ var utWebUI = {
                 case "download_directories":
                     c = c.join('\n');
                     break;
-
+                case "max_dl_rate":
+                case "max_ul_rate":
+                        c /= 1024;
+                        break;
                 case "multi_day_transfer_mode_ul":
                     if (c) {
                         k = 0
@@ -2392,7 +2395,7 @@ var utWebUI = {
                         break;
                     case "seed_time":
                         a /= 60;
-                        break
+                        break;
                 }
                 c.set("value", a)
             }
@@ -2568,6 +2571,10 @@ var utWebUI = {
                     break;
                 case "seed_time":
                     g *= 60;
+                    break;
+                case "max_dl_rate":
+                case "max_ul_rate":
+                    g *= 1024;
                     break;
                 case "search_list":
                     g = g.split("\n").map(function(i) {
@@ -4177,7 +4184,7 @@ var utWebUI = {
         c = "";
         b = this.settings.max_dl_rate || 0;
         if (this.settings["gui.limits_in_statusbar"] && b > 0) {
-            c = "[" + b + " " + L_("SIZE_KB") + g_perSec + "] "
+            c = "[" + b/1024 + " " + L_("SIZE_KB") + g_perSec + "] "
         }
         a = a.replace(/%s/, c);
         d += a;
@@ -4187,7 +4194,7 @@ var utWebUI = {
         c = "";
         b = this.settings.max_ul_rate || 0;
         if (this.settings["gui.limits_in_statusbar"] && b > 0) {
-            c = "[" + b + " " + L_("SIZE_KB") + g_perSec + "] "
+            c = "[" + b/1024 + " " + L_("SIZE_KB") + g_perSec + "] "
         }
         a = a.replace(/%s/, c);
         d += a;
