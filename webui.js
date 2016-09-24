@@ -396,6 +396,9 @@ var utWebUI = {
     TOKEN: "",
     delActions: ["remove", "removedata"],
     advSettings: {
+        "bt.active_downloads": "",
+        "bt.active_limit": "",
+        "bt.active_seeds": "",
         "bt.anonymous_mode": "",
         "bt.allow_same_ip": "",
         "bt.auto_dl_enable": "",
@@ -408,6 +411,7 @@ var utWebUI = {
         "bt.ban_threshold": "",
         "bt.compact_allocation": "",
         "bt.connect_speed": "",
+        "bt.dont_count_slow_torrents": "",
         "bt.enable_pulse": "",
         "bt.enable_tracker": "",
         "bt.failover_peer_speed_threshold": "",
